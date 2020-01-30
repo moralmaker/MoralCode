@@ -1,16 +1,16 @@
 {
-  "name": "rmuif",
-  "version": "2.2.1",
-  "description": "Supercharged version of CRA with all the  bells and whistles",
-  "homepage": "https://rmuif.com",
+  "name": "moralcode",
+  "version": "0.0.1",
+  "description": "Managing Human Morality",
+  "homepage": "https://moralcode.xyz",
   "bugs": {
-    "url": "https://github.com/phoqe/rmuif/issues",
-    "email": "phoqe@phoqe.dev"
+    "url": "https://github.com/moralmaker/moralcode/issues",
+    "email": "uriee@protonmail.com"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/phoqe/rmuif.git"
+    "url": "https://github.com/moralmaker/moralcode.git"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -21,7 +21,7 @@
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
   },
   "config": {
-    "title": "RMUIF",
+    "title": "MoralCode",
     "theme": {
       "primaryColor": "blue",
       "secondaryColor": "red",
@@ -29,15 +29,8 @@
       "dense": false
     },
     "firebase": {
-      "apiKey": "AIzaSyDYZOrZVpXkPQD6J31mb9t2eIIxmGEJK-Q",
-      "authDomain": "react-material-ui-firebase.firebaseapp.com",
-      "databaseUrl": "https://react-material-ui-firebase.firebaseio.com",
-      "projectId": "react-material-ui-firebase",
-      "storageBucket": "react-material-ui-firebase.appspot.com",
-      "messagingSenderId": "552659850812",
-      "appId": "1:552659850812:web:d685f74f72161d96",
-      "measurementId": "G-LYJ69M3CEC"
-    },
+
+  },
     "sentry": {
       "dsn": "https://78536326e6524916b6f44b4ea510b7a4@sentry.io/1846624"
     }
