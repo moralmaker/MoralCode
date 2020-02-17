@@ -1,4 +1,4 @@
-const server = "http://18.190.143.110/api";
+const server = "http://moralcode.xyz/api/";
 
 class api {
   get = async (url, params) => {
@@ -6,7 +6,11 @@ class api {
     const options = {
       method: "GET"
     };
-    const request = new Request(apiUrl + "?" + params, options);
+    const urlParams = new URLSearchParams(Object.entries(params || {}));
+    const request = new Request(
+      apiUrl + (params ? "?" + urlParams : ""),
+      options
+    );
     const response = await fetch(request);
     return response.json();
   };
@@ -21,9 +25,8 @@ class api {
       headers,
       body: JSON.stringify(params)
     };
-    const request = new Request(apiUrl, options);
-    return await fetch(request);
-    /*
+    //const request = new Request(apiUrl, options);
+    //return await fetch(request);
     return new Promise(async (resolve, reject) => {
       try {
         const request = new Request(apiUrl, options);
@@ -34,7 +37,6 @@ class api {
         reject(err);
       }
     });
-    */
   };
 
   put = async (url, params) => {

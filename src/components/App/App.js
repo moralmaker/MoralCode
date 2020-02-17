@@ -18,6 +18,8 @@ import Bar from "../Bar";
 import Router from "../Router";
 import DialogHost from "../DialogHost";
 
+import { observer, useLocalStore, useObserver } from "mobx-react";
+
 const initialState = {
   ready: false,
   performingAction: false,
@@ -57,6 +59,7 @@ const initialState = {
   }
 };
 
+@observer
 class App extends Component {
   constructor(props) {
     super(props);
@@ -262,7 +265,6 @@ class App extends Component {
       deleteAccountDialog,
       signOutDialog
     } = this.state;
-
     const { snackbar } = this.state;
 
     return (

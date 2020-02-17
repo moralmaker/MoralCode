@@ -116,7 +116,7 @@ authentication.signUpWithEmailAddressAndPassword = (emailAddress, password) => {
               method: "password"
             });
 
-            resolve(value);
+            resolve(userDocumentReference);
           })
           .catch(reason => {
             reject(reason);

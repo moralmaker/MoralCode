@@ -27,6 +27,9 @@ import AuthProviderList from "../AuthProviderList";
 import constraints from "../../constraints";
 import authentication from "../../services/authentication";
 
+import Store from "../../services/Store";
+const api = new Store();
+
 const styles = theme => ({
   closeButton: {
     position: "absolute",
@@ -101,6 +104,19 @@ class SignUpDialog extends Component {
             .signUpWithEmailAddressAndPassword(emailAddress, password)
             .then(value => {
               this.props.dialogProps.onClose();
+              return value;
+            })
+            .then(x => {
+              try {
+                const xx = api.post("signup", {
+                  Identifier: emailAddress,
+                  UserUID: x.id
+                });
+                console.log("xxxxxx:", xx);
+                return x.id;
+              } catch {
+                return x.id;
+              }
             })
             .catch(reason => {
               const code = reason.code;
