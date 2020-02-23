@@ -6,16 +6,15 @@ import { withRouter } from "react-router-dom";
 
 import { auth } from "../../firebase";
 
-import HomeIcon from "@material-ui/icons/Home";
-
 import authentication from "../../services/authentication";
 
 import EmptyState from "../EmptyState";
+import PersonalBoard from "./PersonalBoard";
 
 class Home extends Component {
   signInWithEmailLink = () => {
     const { user } = this.props;
-
+    console.log("UUUser:", user);
     if (user) {
       return;
     }
@@ -71,9 +70,10 @@ class Home extends Component {
   render() {
     // Properties
     const { user } = this.props;
+    console.log("USER:", user && user.uid);
 
     if (user) {
-      return <EmptyState icon={<HomeIcon />} title="Home" />;
+      return <PersonalBoard uid={user.uid} />;
     }
 
     return (

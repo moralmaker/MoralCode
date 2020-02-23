@@ -14,6 +14,8 @@ import Divider from "@material-ui/core/Divider";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 
+import { Link } from "react-router-dom";
+
 import UserAvatar from "../UserAvatar";
 
 class Bar extends Component {
@@ -47,7 +49,7 @@ class Bar extends Component {
 
   render() {
     // Properties
-    const { performingAction, user, userData } = this.props;
+    const { performingAction, user, userData, roles } = this.props;
 
     // Events
     const {
@@ -64,6 +66,10 @@ class Bar extends Component {
       {
         name: "About",
         onClick: onAboutClick
+      },
+      {
+        name: "Profile",
+        to: user ? `/user/${user.uid}` : null
       },
       {
         name: "Settings",
@@ -87,6 +93,19 @@ class Bar extends Component {
 
           {user && (
             <>
+              {roles.includes("admin") && (
+                <Box mr={1}>
+                  <Button
+                    color="inherit"
+                    component={Link}
+                    to="/admin"
+                    variant="outlined"
+                  >
+                    Admin
+                  </Button>
+                </Box>
+              )}
+
               <IconButton
                 color="inherit"
                 disabled={performingAction}
@@ -108,36 +127,45 @@ class Bar extends Component {
                     return null;
                   }
 
+                  let component = null;
+
+                  if (menuItem.to) {
+                    component = (
+                      <MenuItem
+                        key={index}
+                        component={Link}
+                        to={menuItem.to}
+                        onClick={this.closeMenu}
+                      >
+                        {menuItem.name}
+                      </MenuItem>
+                    );
+                  } else {
+                    component = (
+                      <MenuItem
+                        key={index}
+                        onClick={() => {
+                          this.closeMenu();
+
+                          menuItem.onClick();
+                        }}
+                      >
+                        {menuItem.name}
+                      </MenuItem>
+                    );
+                  }
+
                   if (menuItem.divide) {
                     return (
                       <span key={index}>
                         <Divider />
 
-                        <MenuItem
-                          onClick={() => {
-                            this.closeMenu();
-
-                            menuItem.onClick();
-                          }}
-                        >
-                          {menuItem.name}
-                        </MenuItem>
+                        {component}
                       </span>
                     );
                   }
 
-                  return (
-                    <MenuItem
-                      key={index}
-                      onClick={() => {
-                        this.closeMenu();
-
-                        menuItem.onClick();
-                      }}
-                    >
-                      {menuItem.name}
-                    </MenuItem>
-                  );
+                  return component;
                 })}
               </Menu>
             </>

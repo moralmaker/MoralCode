@@ -112,7 +112,6 @@ class SignUpDialog extends Component {
                   Identifier: emailAddress,
                   UserUID: x.id
                 });
-                console.log("xxxxxx:", xx);
                 return x.id;
               } catch {
                 return x.id;

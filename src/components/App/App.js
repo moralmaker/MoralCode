@@ -18,8 +18,6 @@ import Bar from "../Bar";
 import Router from "../Router";
 import DialogHost from "../DialogHost";
 
-import { observer, useLocalStore, useObserver } from "mobx-react";
-
 const initialState = {
   ready: false,
   performingAction: false,
@@ -59,7 +57,6 @@ const initialState = {
   }
 };
 
-@observer
 class App extends Component {
   constructor(props) {
     super(props);
@@ -276,21 +273,23 @@ class App extends Component {
 
           {ready && (
             <>
-              <Bar
-                performingAction={performingAction}
-                theme={theme}
-                user={user}
-                userData={userData}
-                onSignUpClick={() => this.openDialog("signUpDialog")}
-                onSignInClick={() => this.openDialog("signInDialog")}
-                onAboutClick={() => this.openDialog("aboutDialog")}
-                onSettingsClick={() => this.openDialog("settingsDialog")}
-                onSignOutClick={() => this.openDialog("signOutDialog")}
-              />
-
               <Router
                 user={user}
                 roles={roles}
+                bar={
+                  <Bar
+                    performingAction={performingAction}
+                    theme={theme}
+                    user={user}
+                    userData={userData}
+                    roles={roles}
+                    onSignUpClick={() => this.openDialog("signUpDialog")}
+                    onSignInClick={() => this.openDialog("signInDialog")}
+                    onAboutClick={() => this.openDialog("aboutDialog")}
+                    onSettingsClick={() => this.openDialog("settingsDialog")}
+                    onSignOutClick={() => this.openDialog("signOutDialog")}
+                  />
+                }
                 openSnackbar={this.openSnackbar}
               />
 

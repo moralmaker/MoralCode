@@ -5,27 +5,26 @@ import PropTypes from "prop-types";
 import { BrowserRouter, Switch, Redirect, Route } from "react-router-dom";
 
 import Home from "../Home";
-import AuthContent from "../AuthContent";
+import HomeContent from "../HomeContent";
 import AdminContent from "../AdminContent";
+import UserContent from "../UserContent";
 import NotFoundContent from "../NotFoundContent";
 
 class Router extends Component {
   render() {
     // Properties
-    const { user, roles } = this.props;
+    const { user, roles, bar } = this.props;
 
     // Functions
     const { openSnackbar } = this.props;
 
     return (
       <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
+        {bar}
+
         <Switch>
           <Route path="/" exact>
             <Home user={user} openSnackbar={openSnackbar} />
-          </Route>
-
-          <Route path="/auth">
-            {user ? <AuthContent /> : <Redirect to="/" />}
           </Route>
 
           <Route path="/admin">
@@ -34,6 +33,10 @@ class Router extends Component {
             ) : (
               <Redirect to="/" />
             )}
+          </Route>
+
+          <Route path="/user/:userId">
+            {user ? <UserContent /> : <Redirect to="/" />}
           </Route>
 
           <Route>
@@ -49,6 +52,7 @@ Router.propTypes = {
   // Properties
   user: PropTypes.object,
   roles: PropTypes.array.isRequired,
+  bar: PropTypes.element,
 
   // Functions
   openSnackbar: PropTypes.func.isRequired
