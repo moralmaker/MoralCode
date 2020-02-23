@@ -13,10 +13,12 @@ import InputCommandment from "./InputCommandment";
 import Store from "../../services/Store";
 const api = new Store();
 
-const addCommandments = commandment => {
+const addCommandment = async (commandment, boardid, uid) => {
   try {
-    const xx = api.post("", {
-      text: commandment
+    const xx = await api.post("addc", {
+      commandment :  commandment ,
+      boardid: boardid,
+      uid: uid
     });
     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", xx);
     return xx;
@@ -78,16 +80,19 @@ function PersonalBoard(props) {
       })
       .catch(error => console.log(error));
   }, [props.uid]);
+
   return (
     <div>
       {isLoading && <p>Wait I'm Loading comments for you</p>}
       {data.data && data.data[0] && (
-        <IconButton aria-label="add" color="primary" onClick={() => {}}>
+        <IconButton aria-label="add" color="primary" onClick={async () => {
+          const xxx = await addCommandment(newc, data.data[0].board.id, props.uid)
+        }}>
           <AddIcon />
           <h1> {data.data[0].board.name} </h1>
         </IconButton>
       )}
-      <InputCommandment setNewc={setNewc} />
+      <InputCommandment setNewc={setNewc} newc={newc} />
       <div className={classes.demo}>{list(data.data, dense)}</div>
     </div>
   );

@@ -4,7 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-export default function InputCommandment({ setNewc }) {
+export default function InputCommandment({ setNewc ,newc}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
@@ -48,10 +48,9 @@ export default function InputCommandment({ setNewc }) {
       }}
       onClose={(x, value) => {
         setOpen(false);
-        setNewc(value);
       }}
       onInputChange={(x, value) => {
-        console.log("$#$#@$@", value);
+        console.log("$#$#@$@", value ,newc);
         setNewc(value);
       }}
       getOptionSelected={(option, value) => option.text === value.text}
