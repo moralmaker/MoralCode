@@ -4,7 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-export default function InputCommandment({ setNewc ,newc}) {
+export default function InputCommandment({ setNewc ,newc, uid}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
@@ -17,8 +17,10 @@ export default function InputCommandment({ setNewc ,newc}) {
     }
 
     (async () => {
-      const response = await fetch("http://moralcode.xyz/api/commandments");
+      console.log("UIDIUDIUDIDUID:", uid)
+      const response = await fetch(`http://moralcode.xyz/_db/moral/moral/com?uid=${uid}`);
       const com = await response.json();
+      console.log("UIDIUDIUDIDUID:", com, response)
       const commandments = com && com.commandments;
       console.log("commandments:", commandments);
       if (active) {
