@@ -62,7 +62,7 @@ export default function InputCommandment({ setNewc ,newc, uid}) {
       renderInput={params => (
         <TextField
           {...params}
-          label="Asynchronous"
+          label="Commandments"
           fullWidth
           variant="outlined"
           InputProps={{

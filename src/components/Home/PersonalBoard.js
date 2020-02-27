@@ -66,6 +66,7 @@ function PersonalBoard(props) {
   const [dense, setDense] = React.useState(false);
   const [newc, setNewc] = React.useState("");
 
+
   const list = (data, dense, uid) => {
     if (!data || !data[0].commandment) return null;
     return (
@@ -100,7 +101,12 @@ function PersonalBoard(props) {
         setData(response);
         setIsLoading(false);
       })
-      .catch(error => console.log(error));
+      .catch(error =>{
+         console.log("in the f catch ",error)
+         setTimeout(() => {
+          setIsLoading(false);
+         }, 500);
+      });
   }, [isLoading]);
 
   return (
