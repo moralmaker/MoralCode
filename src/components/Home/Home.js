@@ -7,9 +7,27 @@ import { withRouter } from "react-router-dom";
 import { auth } from "../../firebase";
 
 import authentication from "../../services/authentication";
+import SwipeableViews from 'react-swipeable-views';
 
 import EmptyState from "../EmptyState";
 import PersonalBoard from "./PersonalBoard";
+
+const styles = {
+  slide: {
+    padding: 15,
+    minHeight: 100,
+    color: '#fff',
+  },
+  slide1: {
+    background: '#FEA900',
+  },
+  slide2: {
+    background: '#B3DC4A',
+  },
+  slide3: {
+    background: '#6AC0FF',
+  },
+};
 
 class Home extends Component {
   signInWithEmailLink = () => {
@@ -70,11 +88,23 @@ class Home extends Component {
   render() {
     // Properties
     const { user } = this.props;
-    console.log("USER:", user && user.uid);
 
-    if (user) {
-      return <PersonalBoard uid={user.uid} />;
+     if(user){
+       return (<SwipeableViews>
+      <div style={Object.assign({}, styles.slide, styles.slide1)}>
+      <PersonalBoard uid={user.uid} />
+      </div>
+      <div style={Object.assign({}, styles.slide, styles.slide2)}>
+      <PersonalBoard uid={user.uid} />
+      </div>
+      <div style={Object.assign({}, styles.slide, styles.slide3)}>
+      <PersonalBoard uid={user.uid} />
+      </div>
+    </SwipeableViews>)
     }
+    //if (user) {
+    //  return <PersonalBoard uid={user.uid} />;
+   // }
 
     return (
       <EmptyState
