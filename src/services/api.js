@@ -1,5 +1,4 @@
-//const server = "http://moralcode.xyz/api/";
-const server = "http://moralcode.xyz/_db/moral/moral/";
+const server = "https://moralcode.xyz/_db/moral/moral/";
 class api {
   get = async (url, params) => {
     const apiUrl = `${server}${url}`;

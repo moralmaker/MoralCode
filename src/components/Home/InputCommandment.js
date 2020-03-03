@@ -18,7 +18,7 @@ export default function InputCommandment({ setNewc ,newc, uid}) {
 
     (async () => {
       console.log("UIDIUDIUDIDUID:", uid)
-      const response = await fetch(`http://moralcode.xyz/_db/moral/moral/com?uid=${uid}`);
+      const response = await fetch(`https://moralcode.xyz/_db/moral/moral/com?uid=${uid}`);
       const com = await response.json();
       console.log("UIDIUDIUDIDUID:", com, response)
       const commandments = com && com.commandments;

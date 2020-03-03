@@ -91,7 +91,7 @@ function PersonalBoard(props) {
   };  
 
   useEffect(() => {
-    fetch(`http://moralcode.xyz/_db/moral/moral/personal?uid=${props.uid}`, {
+    fetch(`https://moralcode.xyz/_db/moral/moral/personal?uid=${props.uid}`, {
       method: "GET",
       headers: new Headers({})
     })
