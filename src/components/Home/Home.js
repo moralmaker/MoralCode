@@ -11,25 +11,30 @@ import SwipeableViews from 'react-swipeable-views';
 
 import EmptyState from "../EmptyState";
 import PersonalBoard from "./PersonalBoard";
+import Pagination from "./Pagination";
+import { autoPlay } from 'react-swipeable-views-utils';
+const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const styles = {
   slide: {
     padding: 15,
     minHeight: 100,
-    color: '#fff',
+    color: '#000',
   },
-  slide1: {
-    background: '#FEA900',
-  },
-  slide2: {
-    background: '#B3DC4A',
-  },
-  slide3: {
-    background: '#6AC0FF',
-  },
+
 };
 
 class Home extends Component {
+  state = {
+    index: 0,
+  };
+
+  handleChangeIndex = index => {
+    this.setState({
+      index,
+    });
+  };
+
   signInWithEmailLink = () => {
     const { user } = this.props;
     console.log("UUUser:", user);
@@ -88,9 +93,11 @@ class Home extends Component {
   render() {
     // Properties
     const { user } = this.props;
+    const { index } = this.state;    
 
      if(user){
-       return (<SwipeableViews>
+       return ( <div>
+       <SwipeableViews index={index} onChangeIndex={this.handleChangeIndex}>
       <div style={Object.assign({}, styles.slide, styles.slide1)}>
       <PersonalBoard uid={user.uid} />
       </div>
@@ -99,8 +106,10 @@ class Home extends Component {
       </div>
       <div style={Object.assign({}, styles.slide, styles.slide3)}>
       <PersonalBoard uid={user.uid} />
-      </div>
-    </SwipeableViews>)
+      </div>    
+      </SwipeableViews>
+      <Pagination dots={3} index={index} onChangeIndex={this.handleChangeIndex} />       
+      </div>)
     }
     //if (user) {
     //  return <PersonalBoard uid={user.uid} />;
