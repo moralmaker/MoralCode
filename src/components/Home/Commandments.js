@@ -10,41 +10,23 @@ import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import InputCommandment from "./InputCommandment";
-
 import Store from "../../services/Store";
 const api = new Store();
 
-const addCommandment = async (commandment, boardid, uid) => {
-  console.log("66666666",commandment, boardid, uid)
+const SupportCommandment = async (cid, uid, sign) => {
+  console.log("66666666",cid,uid,sign)
   try {
-    const xx = await api.post("addc", {
-      commandment :  commandment ,
-      boardid: boardid,
+    const xx = await api.post("support", {
+      _id :  cid ,
+      sign: sign,
       uid: uid
     });
     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", xx);
     return xx;
   } catch {
-    throw new Error("api error - new commandment");
+    throw new Error("api error - Commandment Support");
   }
 };
-
-const removeCommandment = async (commandmentId, boardId, uid) => {
-  try {
-    console.log("___", commandmentId, boardId, uid)
-    const xx = await api.post("removec", {
-      _from :  commandmentId ,
-      _to : boardId,
-      uid: uid
-    });
-    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", xx);
-    return xx;
-  } catch {
-    throw new Error("remove commandment failed");
-  }
-};
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -61,30 +43,41 @@ const useStyles = makeStyles(theme => ({
 
 
 
-function PersonalBoard(props) {
+function Commandments(props) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const classes = useStyles();
   const [dense, setDense] = React.useState(false);
-  const [newc, setNewc] = React.useState("");
-
+  const [refresh, setRefresh] = useState(1);    
+ 
 
   const list = (data, dense, uid) => {
-    if (!data || !data[0].commandment) return null;
+    if (!data || !data[0]) return null;
     return (
       <List dense={dense}>
         {data.map(x => (
-          <ListItem key={x.commandment.id}>
-            <IconButton aria-label="delete" color="primary"  onClick={ async () => {
-                await removeCommandment(x.commandment.id, x.board.id, uid) 
+          <ListItem key={x._id}>
+            <span>{x.support}</span>
+            <IconButton aria-label="add" color="primary"  onClick={ async () => {
+                await SupportCommandment(x._id, uid, 'p') 
                 setIsLoading(true)
+                setRefresh(refresh + 1)
+              }
+            }>
+              <AddIcon />
+            </IconButton>
+            <IconButton aria-label="delete" color="primary"  onClick={ async () => {
+                await SupportCommandment(x._id, uid, 'n') 
+                setIsLoading(true)
+                setRefresh(refresh + 1)  
+                console.log('RERER',refresh)              
               }
             }>
               <DeleteIcon />
-            </IconButton>
+            </IconButton>            
             <ListItemText
-              primary={x.commandment.text}
-              secondary={x.commandment.author ? x.commandment.author : null}
+              primary={x.text}
+              secondary={x.author ? x.author : null}
             />
           </ListItem>
         ))}
@@ -93,13 +86,13 @@ function PersonalBoard(props) {
   };  
 
   useEffect(() => {
-    fetch(`https://moralcode.xyz/_db/moral/moral/personal?uid=${props.uid}`, {
+    fetch(`https://moralcode.xyz/_db/moral/moral/com?active=false&uid=${props.uid}`, {
       method: "GET",
       headers: new Headers({})
     })
       .then(res => res.json())
       .then(response => {
-        console.log("resp", response);
+        console.log("DDDData:",response)
         setData(response);
         setIsLoading(false);
       })
@@ -109,29 +102,19 @@ function PersonalBoard(props) {
           setIsLoading(false);
          }, 500);
       });
-  }, [isLoading]);
-
+  }, [refresh]);
   return (
     <div>
-      {isLoading && <p>Wait I'm Loading comments for you</p>}
-      {data.data && data.data[0] && (
-        <IconButton aria-label="add" color="primary" onClick={async () => {
-          const xxx = await addCommandment(newc, data.data[0].board.id, props.uid)
-          console.log("____",this)
-          setIsLoading(true)
-        }}>
-          <AddIcon />
-          <h1> {data.data[0].board.name} </h1>
-        </IconButton>
+        <IconButton aria-label="add" color="primary" onClick={() => setRefresh(2)}> <h1> Commandments </h1></IconButton>
+
+      {data.commandments && (
+      <div className={classes.demo}>{list(data.commandments, dense, props.uid)}</div>
       )}
-      <InputCommandment setNewc={setNewc} newc={newc} uid={props.uid} />
-      <div className={classes.demo}>{list(data.data, dense, props.uid)}</div>
       <Backdrop className={classes.backdrop} open={isLoading} >
         <CircularProgress color="inherit" />
-      </Backdrop>       
+      </Backdrop>      
     </div>
   );
 }
 
-export default PersonalBoard;
-/*        <InputCommandment setNewc={setNewc}/>*/
+export default Commandments;

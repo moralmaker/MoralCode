@@ -11,9 +11,8 @@ import SwipeableViews from 'react-swipeable-views';
 
 import EmptyState from "../EmptyState";
 import PersonalBoard from "./PersonalBoard";
+import Commandments from "./Commandments";
 import Pagination from "./Pagination";
-import { autoPlay } from 'react-swipeable-views-utils';
-const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const styles = {
   slide: {
@@ -97,12 +96,12 @@ class Home extends Component {
 
      if(user){
        return ( <div>
-       <SwipeableViews index={index} onChangeIndex={this.handleChangeIndex}>
+       <SwipeableViews index={index} onChangeIndex={this.handleChangeIndex} resistance={true} >
       <div style={Object.assign({}, styles.slide, styles.slide1)}>
       <PersonalBoard uid={user.uid} />
       </div>
       <div style={Object.assign({}, styles.slide, styles.slide2)}>
-      <PersonalBoard uid={user.uid} />
+      <Commandments uid={user.uid} />
       </div>
       <div style={Object.assign({}, styles.slide, styles.slide3)}>
       <PersonalBoard uid={user.uid} />
