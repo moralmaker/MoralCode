@@ -9,16 +9,16 @@ import AddIcon from "@material-ui/icons/Add";
 import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Badge from '@material-ui/core/Badge';
 
 import Store from "../../services/Store";
 const api = new Store();
 
-const SupportCommandment = async (cid, uid, sign) => {
-  console.log("66666666",cid,uid,sign)
+const SupportCommandment = async (cid, uid, edgeName) => {
+  console.log("66666666",cid,uid,edgeName)
   try {
-    const xx = await api.post("support", {
+    const xx = await api.post(edgeName, {
       _id :  cid ,
-      sign: sign,
       uid: uid
     });
     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", xx);
@@ -56,24 +56,26 @@ function Commandments(props) {
     return (
       <List dense={dense}>
         {data.map(x => (
-          <ListItem key={x._id}>
-            <span>{x.support}</span>
-            <IconButton aria-label="add" color="primary"  onClick={ async () => {
-                await SupportCommandment(x._id, uid, 'p') 
+          <ListItem key={x._id}>          
+            <IconButton  color="primary"  onClick={ async () => {
+                await SupportCommandment(x._id, uid, 'support') 
                 setIsLoading(true)
                 setRefresh(refresh + 1)
               }
             }>
-              <AddIcon />
+                <Badge  badgeContent={x.support} max={10000}>
+                    <AddIcon />
+                </Badge>    
             </IconButton>
             <IconButton aria-label="delete" color="primary"  onClick={ async () => {
-                await SupportCommandment(x._id, uid, 'n') 
+                await SupportCommandment(x._id, uid, 'unsupport') 
                 setIsLoading(true)
                 setRefresh(refresh + 1)  
                 console.log('RERER',refresh)              
               }
-            }>
-              <DeleteIcon />
+            }><Badge  badgeContent={x.unsupport} max={10000}>
+                <DeleteIcon />
+              </Badge>
             </IconButton>            
             <ListItemText
               primary={x.text}
