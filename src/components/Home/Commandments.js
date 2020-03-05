@@ -10,6 +10,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Badge from '@material-ui/core/Badge';
+import InfiniteScroll from "react-infinite-scroll-component";
 
 import Store from "../../services/Store";
 const api = new Store();
@@ -49,7 +50,10 @@ function Commandments(props) {
   const classes = useStyles();
   const [dense, setDense] = React.useState(false);
   const [refresh, setRefresh] = useState(1);    
+  const [index, setIndex] = useState(0);
+  const [more, setMore] = useState(true);   
  
+  const getCommandments = () => setIndex(index +10)    
 
   const list = (data, dense, uid) => {
     if (!data || !data[0]) return null;
@@ -70,8 +74,7 @@ function Commandments(props) {
             <IconButton aria-label="delete" color="primary"  onClick={ async () => {
                 await SupportCommandment(x._id, uid, 'unsupport') 
                 setIsLoading(true)
-                setRefresh(refresh + 1)  
-                console.log('RERER',refresh)              
+                setRefresh(refresh + 1)             
               }
             }><Badge  badgeContent={x.unsupport} max={10000}>
                 <DeleteIcon />
@@ -88,14 +91,17 @@ function Commandments(props) {
   };  
 
   useEffect(() => {
-    fetch(`https://moralcode.xyz/_db/moral/moral/com?active=false&uid=${props.uid}`, {
+    fetch(`https://moralcode.xyz/_db/moral/moral/com?active=false&uid=${props.uid}&offset=${index}&count=10&orderby=support`, {
       method: "GET",
       headers: new Headers({})
     })
       .then(res => res.json())
       .then(response => {
+        response = response.commandments
         console.log("DDDData:",response)
-        setData(response);
+        if((response.length || 0) < 10) setMore(false)
+        const commandments = index === 0  ? response : [...data, ...response]
+        setData(commandments);
         setIsLoading(false);
       })
       .catch(error =>{
@@ -104,13 +110,29 @@ function Commandments(props) {
           setIsLoading(false);
          }, 500);
       });
-  }, [refresh]);
+  }, [refresh, index]);
   return (
     <div>
         <IconButton aria-label="add" color="primary" onClick={() => setRefresh(2)}> <h1> Commandments </h1></IconButton>
 
-      {data.commandments && (
-      <div className={classes.demo}>{list(data.commandments, dense, props.uid)}</div>
+      {data && (
+        <div className={classes.demo}>
+            {console.log("~~~~",index,more,data.length)}
+          <InfiniteScroll
+          dataLength={data.length || 0}
+          next={getCommandments }
+          hasMore={more}
+          loader={<h4>Loading...</h4>}
+          endMessage={
+            <p style={{ textAlign: "center" }}>
+              <b>Yay! You have seen it all</b>
+            </p>
+          }
+        >
+         {list(data, dense, props.uid)}
+        </InfiniteScroll>
+
+        </div>
       )}
       <Backdrop className={classes.backdrop} open={isLoading} >
         <CircularProgress color="inherit" />
