@@ -15,19 +15,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Store from "../../services/Store";
 const api = new Store();
 
-const SupportCommandment = async (cid, uid, edgeName) => {
-  console.log("66666666",cid,uid,edgeName)
-  try {
-    const xx = await api.post(edgeName, {
-      _id :  cid ,
-      uid: uid
-    });
-    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", xx);
-    return xx;
-  } catch {
-    throw new Error("api error - Commandment Support");
-  }
-};
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,9 +29,64 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const Commandment =(props) => {
+  const [type, setType] = useState('');
+  const [support, setSupport] = useState(props.support);
+  const [supported, setSupported] = useState(props.supported);  
+  const [unsupport, setUnsupport] = useState(props.unsupport);   
+  const [unsupported, setUnsupported] = useState(props.supported);    
+  
+  const SupportCommandment = async (cid, uid, edgeName) => {
+    console.log("66666666",cid,uid,edgeName)
+    try {
+      const xx = await api.post(edgeName, {
+        _id :  cid ,
+        uid: uid
+      });
+      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", xx);
+      return xx;
+    } catch {
+      throw new Error("api error - Commandment Support");
+    }
+  };
+
+  useEffect(() => {
+      if(type !== '') {
+        const xxx = async () => await SupportCommandment(props._id, props.uid, type) 
+      }
+    },[support, unsupport])
+
+  return (
+    <ListItem key={props._id}>          
+            <IconButton  color={supported ? "secondary" : "primary"}  onClick={() => {
+                setType('support')
+                setSupported(!supported)
+                setSupport(support + (supported === true ? -1 : 1 ))
+              }
+            }>
+                <Badge  badgeContent={support} max={10000}>
+                    <AddIcon />
+                </Badge>    
+            </IconButton>
+            <IconButton aria-label="delete" color={unsupported ? "secondary" : "primary"}  onClick={ async () => {
+                setType('unsupport')
+                setUnsupported(!unsupported)
+                setUnsupport(unsupport + (unsupported === true ? -1 : 1 ))            
+              }
+            }><Badge  badgeContent={unsupport} max={10000}>
+                <DeleteIcon />
+              </Badge>
+            </IconButton>            
+            <ListItemText
+              primary={props.text}
+              secondary={props.author ? props.author : null}
+            />
+          </ListItem>
+  )
+}
 
 
-function Commandments(props) {
+const  Commandments = (props) => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const classes = useStyles();
@@ -59,33 +101,8 @@ function Commandments(props) {
     if (!data || !data[0]) return null;
     return (
       <List dense={dense}>
-        {data.map(x => (
-          <ListItem key={x._id}>          
-            <IconButton  color="primary"  onClick={ async () => {
-                await SupportCommandment(x._id, uid, 'support') 
-                setIsLoading(true)
-                setRefresh(refresh + 1)
-              }
-            }>
-                <Badge  badgeContent={x.support} max={10000}>
-                    <AddIcon />
-                </Badge>    
-            </IconButton>
-            <IconButton aria-label="delete" color="primary"  onClick={ async () => {
-                await SupportCommandment(x._id, uid, 'unsupport') 
-                setIsLoading(true)
-                setRefresh(refresh + 1)             
-              }
-            }><Badge  badgeContent={x.unsupport} max={10000}>
-                <DeleteIcon />
-              </Badge>
-            </IconButton>            
-            <ListItemText
-              primary={x.text}
-              secondary={x.author ? x.author : null}
-            />
-          </ListItem>
-        ))}
+        {data.map(x => <Commandment  {...x} uid={uid}/>
+        )}
       </List>
     );
   };  
