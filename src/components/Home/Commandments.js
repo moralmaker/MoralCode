@@ -19,22 +19,27 @@ const api = new Store();
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 20,
-    maxWidth: 752
+    maxWidth: 752,
   },
   demo: {
     backgroundColor: theme.palette.background.black
   },
   title: {
     margin: theme.spacing(1, 1, 1)
+  },
+  commandment : {
+    fontFamily: "Times New Roman"
   }
 }));
 
 const Commandment =(props) => {
   const [type, setType] = useState('');
+  const [refresh, setRefresh] = useState(0);
   const [support, setSupport] = useState(props.support);
-  const [supported, setSupported] = useState(props.supported);  
+  const [supported, setSupported] = useState(!!props.supported);  
   const [unsupport, setUnsupport] = useState(props.unsupport);   
-  const [unsupported, setUnsupported] = useState(props.supported);    
+  const [unsupported, setUnsupported] = useState(!!props.supported);    
+    const classes = useStyles();
   
   const SupportCommandment = async (cid, uid, edgeName) => {
     console.log("66666666",cid,uid,edgeName)
@@ -51,10 +56,12 @@ const Commandment =(props) => {
   };
 
   useEffect(() => {
+    
       if(type !== '') {
-        const xxx = async () => await SupportCommandment(props._id, props.uid, type) 
+        console.log("iuyfuiyrseuisyrkw,refresh", refresh, type)
+        SupportCommandment(props._id, props.uid, type) 
       }
-    },[support, unsupport])
+    },[refresh])
 
   return (
     <ListItem key={props._id}>          
@@ -62,6 +69,7 @@ const Commandment =(props) => {
                 setType('support')
                 setSupported(!supported)
                 setSupport(support + (supported === true ? -1 : 1 ))
+                setRefresh(refresh +1)
               }
             }>
                 <Badge  badgeContent={support} max={10000}>
@@ -71,13 +79,14 @@ const Commandment =(props) => {
             <IconButton aria-label="delete" color={unsupported ? "secondary" : "primary"}  onClick={ async () => {
                 setType('unsupport')
                 setUnsupported(!unsupported)
-                setUnsupport(unsupport + (unsupported === true ? -1 : 1 ))            
+                setUnsupport(unsupport + (unsupported === true ? -1 : 1 ))   
+                setRefresh(refresh +1)         
               }
             }><Badge  badgeContent={unsupport} max={10000}>
                 <DeleteIcon />
               </Badge>
             </IconButton>            
-            <ListItemText
+            <ListItemText className={classes.commandment}
               primary={props.text}
               secondary={props.author ? props.author : null}
             />

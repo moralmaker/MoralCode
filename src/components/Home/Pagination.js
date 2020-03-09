@@ -4,13 +4,19 @@ import PaginationDot from './PaginationDot';
 
 const styles = {
   root: {
-    position: 'absolute',
+    position: 'fixed',
+    
     bottom: 8,
     right: 8,
     display: 'flex',
     flexDirection: 'row',
   },
 };
+
+function topFunction() {
+  document.body.scrollTop = 0; // For Safari
+  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
 
 class Pagination extends React.Component {
   handleClick = (event, index) => {
@@ -28,7 +34,7 @@ class Pagination extends React.Component {
       );
     }
 
-    return <div style={styles.root}>{children}</div>;
+    return <div onClick={topFunction} style={styles.root}>{children}</div>;
   }
 }
 
