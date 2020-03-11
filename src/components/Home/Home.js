@@ -12,6 +12,7 @@ import SwipeableViews from 'react-swipeable-views';
 import EmptyState from "../EmptyState";
 import PersonalBoard from "./PersonalBoard";
 import Commandments from "./Commandments";
+import Boards from "./Boards";
 import Pagination from "./Pagination";
 
 const styles = {
@@ -104,7 +105,7 @@ class Home extends Component {
       <Commandments uid={user.uid} />
       </div>
       <div style={Object.assign({}, styles.slide, styles.slide3)}>
-      <PersonalBoard uid={user.uid} />
+      <Boards uid={user.uid} />
       </div>    
       </SwipeableViews>
       <Pagination dots={3} index={index} onChangeIndex={this.handleChangeIndex} />       
