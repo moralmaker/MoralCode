@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+import PropTypes from "prop-types";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -42,13 +43,11 @@ const Commandment =(props) => {
     const classes = useStyles();
   
   const SupportCommandment = async (cid, uid, edgeName) => {
-    console.log("66666666",cid,uid,edgeName)
     try {
       const xx = await api.post(edgeName, {
         _id :  cid ,
         uid: uid
       });
-      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", xx);
       return xx;
     } catch {
       throw new Error("api error - Commandment Support");
@@ -139,11 +138,10 @@ const  Commandments = (props) => {
   }, [refresh, index]);
   return (
     <div>
-        <IconButton aria-label="add" color="primary" onClick={() => setRefresh(2)}> <h1> Commandments </h1></IconButton>
+        <IconButton aria-label="add" color="primary" onClick={() => setRefresh(2)}> <h3> Commandments </h3></IconButton>
 
       {data && (
         <div className={classes.demo}>
-            {console.log("~~~~",index,more,data.length)}
           <InfiniteScroll
           dataLength={data.length || 0}
           next={getCommandments }
@@ -166,5 +164,9 @@ const  Commandments = (props) => {
     </div>
   );
 }
+
+Commandments.propTypes = {
+  user: PropTypes.object
+};
 
 export default Commandments;

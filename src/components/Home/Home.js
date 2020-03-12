@@ -7,13 +7,8 @@ import { withRouter } from "react-router-dom";
 import { auth } from "../../firebase";
 
 import authentication from "../../services/authentication";
-import SwipeableViews from 'react-swipeable-views';
-
 import EmptyState from "../EmptyState";
 import PersonalBoard from "./PersonalBoard";
-import Commandments from "./Commandments";
-import Boards from "./Boards";
-import Pagination from "./Pagination";
 
 const styles = {
   slide: {
@@ -96,19 +91,9 @@ class Home extends Component {
     const { index } = this.state;    
 
      if(user){
-       return ( <div>
-       <SwipeableViews index={index} onChangeIndex={this.handleChangeIndex} resistance={true} >
+       return ( 
       <div style={Object.assign({}, styles.slide, styles.slide1)}>
-      <PersonalBoard uid={user.uid} />
-      </div>
-      <div style={Object.assign({}, styles.slide, styles.slide2)}>
-      <Commandments uid={user.uid} />
-      </div>
-      <div style={Object.assign({}, styles.slide, styles.slide3)}>
-      <Boards uid={user.uid} />
-      </div>    
-      </SwipeableViews>
-      <Pagination dots={3} index={index} onChangeIndex={this.handleChangeIndex} />       
+        <PersonalBoard uid={user.uid} />
       </div>)
     }
     //if (user) {
@@ -129,7 +114,6 @@ class Home extends Component {
 }
 
 Home.propTypes = {
-  // Properties
   user: PropTypes.object
 };
 

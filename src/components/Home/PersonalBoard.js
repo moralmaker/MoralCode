@@ -121,7 +121,7 @@ function PersonalBoard(props) {
           setIsLoading(true)
         }}>
           <AddIcon />
-          <h1> {data.data[0].board.name} </h1>
+          <h3> {data.data[0].board.name} </h3>
         </IconButton>
       )}
       <InputCommandment setNewc={setNewc} newc={newc} uid={props.uid} />

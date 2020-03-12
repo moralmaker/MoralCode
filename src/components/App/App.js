@@ -109,6 +109,10 @@ class App extends Component {
     this.setState({ dialog }, callback);
   };
 
+  broute = (index, callback) => {
+    this.setState({ broute : index }, callback);
+  };
+
   closeDialog = (dialogId, callback) => {
     const dialog = this.state[dialogId];
 

@@ -9,7 +9,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Badge from '@material-ui/core/Badge';
 
-import { Map, Marker, Popup, TileLayer } from "react-leaflet";
+import { Map, Circle, Popup, TileLayer } from "react-leaflet";
 import { Icon } from "leaflet";
 import "./boards.css";
 import {usePosition} from  "../../services/GeoHook";
@@ -42,7 +42,7 @@ const  Boards = (props) => {
   const [dense, setDense] = React.useState(false);
   const [refresh, setRefresh] = useState(1);    
   const [index, setIndex] = useState(0);
-  const [more, setMore] = useState(true);   
+  const [more, setMore] = useState(true);    
 
   const {latitude, longitude, error} = usePosition();  
 
@@ -98,6 +98,7 @@ const  Boards = (props) => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 />
+                <Circle center={[latitude, longitude]} radius={100}></Circle>
             </Map>}
 
          {list(data, dense, props.uid)}
