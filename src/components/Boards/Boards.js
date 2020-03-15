@@ -44,7 +44,7 @@ const  Boards = (props) => {
   const [index, setIndex] = useState(0);
   const [more, setMore] = useState(true);    
 
-  const {latitude, longitude, error} = usePosition();  
+  const {latitude, longitude, error} = usePosition(true);  
 
   const getboards = () => setIndex(index +10)    
 
@@ -98,7 +98,8 @@ const  Boards = (props) => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 />
-                <Circle center={[latitude, longitude]} radius={100}></Circle>
+                {}
+                <Circle center={[latitude, longitude]} radius={50}></Circle>
             </Map>}
 
          {list(data, dense, props.uid)}
