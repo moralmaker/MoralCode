@@ -43,7 +43,7 @@ class Router extends Component {
 
     // Functions
     const { openSnackbar } = this.props;
-
+    const uid = user && user.uid ?  user.uid : null
     return (
       <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
         {bar}
@@ -52,10 +52,10 @@ class Router extends Component {
             <Home user={user} openSnackbar={openSnackbar} />
           </Route>
           <Route path="/commandments" exact>
-            <Commandments uid={user.uid} openSnackbar={openSnackbar} />
+            <Commandments uid={uid} openSnackbar={openSnackbar} />
           </Route>
           <Route path="/boards" exact>
-            <Boards uid={user.uid} openSnackbar={openSnackbar} />
+            <Boards uid={uid} openSnackbar={openSnackbar} />
           </Route>                    
 
           <Route path="/admin">

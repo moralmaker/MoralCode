@@ -106,7 +106,7 @@ authentication.signUpWithEmailAddressAndPassword = (emailAddress, password) => {
 
           return;
         }
-
+        console.log("~~~~~~~~~~~~~~~~~~~~~~", firestore.collection("users").doc(uid) )
         const userDocumentReference = firestore.collection("users").doc(uid);
 
         userDocumentReference
@@ -135,7 +135,6 @@ authentication.signIn = (emailAddress, password) => {
 
       return;
     }
-
     if (auth.currentUser) {
       reject();
 
@@ -146,7 +145,6 @@ authentication.signIn = (emailAddress, password) => {
       .signInWithEmailAndPassword(emailAddress, password)
       .then(value => {
         const user = value.user;
-
         if (!user) {
           reject();
 

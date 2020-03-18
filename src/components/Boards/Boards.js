@@ -8,6 +8,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Badge from '@material-ui/core/Badge';
+import Drawer from '@material-ui/core/Drawer';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
 
 import { Map, Circle, Popup, TileLayer } from "react-leaflet";
 import { Icon } from "leaflet";
@@ -24,6 +28,12 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 20,
     maxWidth: 752,
   },
+  form: {
+    '& > *': {
+      margin: theme.spacing(1),
+      width: 200,
+    }
+  },
   demo: {
     backgroundColor: theme.palette.background.black
   },
@@ -32,8 +42,19 @@ const useStyles = makeStyles(theme => ({
   },
   board : {
     fontFamily: "Times New Roman"
-  }
+  },
+  list: {
+    width: 250,
+  },
+  fullList: {
+    width: 'auto',
+  },
+  input: {
+    marginTop: 50,
+    display: 'block'
+  }    
 }));
+
 
 const  Boards = (props) => {
   const [data, setData] = useState([]);
@@ -42,10 +63,29 @@ const  Boards = (props) => {
   const [dense, setDense] = React.useState(false);
   const [refresh, setRefresh] = useState(1);    
   const [index, setIndex] = useState(0);
-  const [more, setMore] = useState(true);    
+  const [more, setMore] = useState(true);   
+  const [newBoardDrawer, setNewBoardDrawer]  = useState(false);
 
   const {latitude, longitude, error} = usePosition(true);  
 
+  const toggleNewBoard = () => event => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setNewBoardDrawer(!newBoardDrawer);
+  };
+
+  const getNewBoard = () => (
+    <div
+      className={classes.form}
+      role="presentation"
+
+    >
+      <TextField className={classes.input} id="inputName" label="Name" />
+      <TextField className={classes.input} type="number" id="inputRadius" label="Radius" />
+      <IconButton aria-label="add" className={classes.input}  color="primary" onClick={toggleNewBoard()}> New Borad </IconButton>
+    </div>
+  );
   const getboards = () => setIndex(index +10)    
 
   const list = (data, dense, uid) => {
@@ -85,9 +125,9 @@ const  Boards = (props) => {
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-  crossorigin=""
+  crossOrigin=""
 />
-        <IconButton aria-label="add" color="primary" onClick={() => setRefresh(2)}> <h3> boards </h3></IconButton>
+        <IconButton aria-label="add" color="primary" onClick={toggleNewBoard()}> <h3> boards </h3></IconButton>
 
    
       {data && (
@@ -109,7 +149,11 @@ const  Boards = (props) => {
       )}
       <Backdrop className={classes.backdrop} open={isLoading} >
         <CircularProgress color="inherit" />
-      </Backdrop>      
+      </Backdrop> 
+      <Drawer anchor="left" open={newBoardDrawer} onClose={toggleNewBoard()}>
+        {getNewBoard()}
+      </Drawer>   
+              
     </div>
   );
 }
