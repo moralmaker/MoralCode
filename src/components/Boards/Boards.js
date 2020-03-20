@@ -18,6 +18,8 @@ import { Icon } from "leaflet";
 import "./boards.css";
 import {usePosition} from  "../../services/GeoHook";
 
+import EmptyState from "../EmptyState";
+
 import Board from "./Board";
 import Store from "../../services/Store";
 const api = new Store();
@@ -63,10 +65,26 @@ const  Boards = (props) => {
   const [dense, setDense] = React.useState(false);
   const [refresh, setRefresh] = useState(1);    
   const [index, setIndex] = useState(0);
-  const [more, setMore] = useState(true);   
+  const [submit, setsubmit] = useState(true);  
+  const [newBoardName, setNewBoardName] = useState('');     
+  const [radius, setRadius] = useState(20);    
   const [newBoardDrawer, setNewBoardDrawer]  = useState(false);
+  const {latitude, longitude, error} = usePosition(false);  
 
-  const {latitude, longitude, error} = usePosition(true);  
+  const NewBoard = async () => {
+    try {
+      const xx = await api.post('addb', {
+        newBoardName,
+        latitude,
+        longitude,
+        radius,
+        uid
+      });
+      if(xx) setRefresh(refresh)
+    } catch {
+      throw new Error("api error - add new board");
+    }
+  };  
 
   const toggleNewBoard = () => event => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -81,11 +99,12 @@ const  Boards = (props) => {
       role="presentation"
 
     >
-      <TextField className={classes.input} id="inputName" label="Name" />
-      <TextField className={classes.input} type="number" id="inputRadius" label="Radius" />
-      <IconButton aria-label="add" className={classes.input}  color="primary" onClick={toggleNewBoard()}> New Borad </IconButton>
+      <TextField className={classes.input} id="inputName" label="Name" onChange={ (e)=> setNewBoardName(e.target.value) } />
+      <TextField className={classes.input} type="number" id="inputRadius" label="Radius" onChange={ (e)=> setRadius(e.target.value) } />
+      <IconButton aria-label="add" className={classes.input}  color="primary" onClick={NewBoard}> New Borad </IconButton>
     </div>
   );
+
   const getboards = () => setIndex(index +10)    
 
   const list = (data, dense, uid) => {
@@ -96,10 +115,13 @@ const  Boards = (props) => {
         )}
       </List>
     );
-  };  
+  };
 
   useEffect(() => {
-    fetch(`https://moralcode.xyz/_db/moral/moral/com?active=false&uid=${props.uid}&offset=${index}&count=10&orderby=support`, {
+    const link = `https://moralcode.xyz/_db/moral/moral/geoBoards?latitude=${latitude}&longitude=${longitude}&uid=${props.uid}&redius=${2000}`
+    console.log("_____    ",link)
+
+    latitude && fetch(link, {
       method: "GET",
       headers: new Headers({})
     })
@@ -107,7 +129,6 @@ const  Boards = (props) => {
       .then(response => {
         response = response.boards
         console.log("DDDData:",response)
-        if((response.length || 0) < 10) setMore(false)
         const boards = index === 0  ? response : [...data, ...response]
         setData(boards);
         setIsLoading(false);
@@ -118,8 +139,12 @@ const  Boards = (props) => {
           setIsLoading(false);
          }, 500);
       });
-  }, [refresh, index]);
-  return (
+  }, [refresh, index ,latitude]);
+
+  const { uid } = props;
+
+  return uid ? 
+  (
     <div>
         <link
   rel="stylesheet"
@@ -132,8 +157,8 @@ const  Boards = (props) => {
    
       {data && (
         <div className={classes.demo}>
-            {console.log("~~~~",index,more,data.length)}
-            {latitude && <Map center={[latitude, longitude]} zoom={12}>
+            {console.log("~~~~",index,submit,data.length)}
+            {latitude && <Map center={[latitude, longitude]} zoom={18}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -155,7 +180,12 @@ const  Boards = (props) => {
       </Drawer>   
               
     </div>
-  );
+  ) : (
+    <EmptyState
+      title={process.env.REACT_APP_TITLE}
+      description={process.env.REACT_APP_DESCRIPTION}
+    />
+  )
 }
 
 export default Boards;
