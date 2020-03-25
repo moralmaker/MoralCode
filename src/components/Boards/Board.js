@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
@@ -13,6 +13,7 @@ const api = new Store();
 
 
 const useStyles = makeStyles(theme => ({
+
   root: {
     flexGrow: 20,
     maxWidth: 752,
@@ -29,66 +30,48 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Board = (props) => {
-  const [type, setType] = useState('');
-  const [refresh, setRefresh] = useState(0);
-  const [support, setSupport] = useState(props.support);
-  const [supported, setSupported] = useState(!!props.supported);  
-  const [unsupport, setUnsupport] = useState(props.unsupport);   
-  const [unsupported, setUnsupported] = useState(!!props.supported);    
-  const classes = useStyles();
+  const data = props.data
 
+  const list = (data, dense) => {
+        
+    if (!data) return null;
+    return (
+      <List dense={dense}>
+        {data.map(x => (
+          <ListItem key={x._id}>
+            <Badge  color='primary' anchorOrigin={{vertical: 'bottom', horizontal: 'left' }} badgeContent={x.cnt} max={10000}>               
+              <ListItemText
+                primary={x.text}
+                secondary={x.author ? x.author : null}
+              />
+            </Badge> 
+          </ListItem>
+        ))}
+      </List>
+    );
+  };
  
-  const Supportboard = async (cid, uid, edgeName) => {
-    console.log("66666666",cid,uid,edgeName)
+  const getOnBoard = async (uid, bid,) => {
     try {
-      const xx = await api.post(edgeName, {
-        _id :  cid ,
+      const xx = await api.post('getOnBoard', {
+        _id :  bid ,
         uid: uid
       });
       console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", xx);
       return xx;
     } catch {
-      throw new Error("api error - board Support");
+      throw new Error("api error - getOnBoard ");
     }
   };
 
-  useEffect(() => {
-    
-      if(type !== '') {
-        console.log("iuyfuiyrseuisyrkw,refresh", refresh, type)
-        Supportboard(props._id, props.uid, type) 
-      }
-    },[refresh])
 
-  return (
-    <ListItem key={props._id}>          
-            <IconButton  color={supported ? "secondary" : "primary"}  onClick={() => {
-                setType('support')
-                setSupported(!supported)
-                setSupport(support + (supported === true ? -1 : 1 ))
-                setRefresh(refresh +1)
-              }
-            }>
-                <Badge  badgeContent={support} max={10000}>
-                    <AddIcon />
-                </Badge>    
-            </IconButton>
-            <IconButton aria-label="delete" color={unsupported ? "secondary" : "primary"}  onClick={ async () => {
-                setType('unsupport')
-                setUnsupported(!unsupported)
-                setUnsupport(unsupport + (unsupported === true ? -1 : 1 ))   
-                setRefresh(refresh +1)         
-              }
-            }><Badge  badgeContent={unsupport} max={10000}>
-                <DeleteIcon />
-              </Badge>
-            </IconButton>            
-            <ListItemText className={classes.board}
-              primary={props.text}
-              secondary={props.author ? props.author : null}
-            />
-          </ListItem>
-  )
+  return data ? (
+    <div>
+      <h1>{data.board.name}</h1>
+      {list(data.commandments)}
+      <IconButton  color="primary"  onClick={() => {}}>Get On Board</IconButton>
+    </div>
+  ) : <span/>
 }
 
 

@@ -13,7 +13,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 
-import { Map, Circle, Popup, TileLayer } from "react-leaflet";
+import { Map, Circle, Popup, Tooltip, TileLayer } from "react-leaflet";
 import { Icon } from "leaflet";
 import "./boards.css";
 import { usePosition } from "../../services/GeoHook";
@@ -67,12 +67,14 @@ const Boards = props => {
   const [newBoardName, setNewBoardName] = useState("");
   const [radius, setRadius] = useState(20);
   const [newBoardDrawer, setNewBoardDrawer] = useState(false);
+  const [showBoardDrawer, setShowBoardDrawer] = useState(false);  
+  const [showBoardIndex, setShowBoardIndex] = useState(0);    
   const { latitude, longitude, error } = usePosition(false);
 
   const NewBoard = async () => {
     try {
       const xx = await api.post("addb", {
-        newBoardName,
+        name: newBoardName,
         latitude,
         longitude,
         radius,
@@ -93,6 +95,23 @@ const Boards = props => {
     }
     setNewBoardDrawer(!newBoardDrawer);
   };
+
+  const toggleShowBoard = (index) => event => {
+    //get the board index
+    setShowBoardIndex(index)//get the board index
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    setShowBoardDrawer(!showBoardDrawer);
+  };
+
+  const showBoard = () => {
+    console.log("XXXXXX   ",showBoardIndex,data[showBoardIndex])
+    return  (<Board data={data[showBoardIndex]}/>)
+  }
 
   const getNewBoard = () => (
     <div className={classes.form} role="presentation">
@@ -121,18 +140,6 @@ const Boards = props => {
     </div>
   );
 
-  const getboards = () => setIndex(index + 10);
-  /*
-  const list = (data, dense, uid) => {
-    if (!data || !data[0]) return null;
-    return (
-      <List dense={dense}>
-        {data.map(x => <board  {...x} uid={uid}/>
-        )}
-      </List>
-    );
-  }
-  */
 
   useEffect(() => {
     const link = `https://moralcode.xyz/_db/moral/moral/geoBoards?latitude=${latitude}&longitude=${longitude}&uid=${
@@ -150,6 +157,7 @@ const Boards = props => {
           response = response.boards;
           console.log("DDDData:", response);
           const boards = index === 0 ? response : [...data, ...response];
+          boards.forEach((x,i) => x.index = i)
           setData(boards);
           setIsLoading(false);
         })
@@ -180,22 +188,23 @@ const Boards = props => {
         <div className={classes.demo}>
           {console.log("~~~~", index, submit, data.length)}
           {latitude && (
-            <Map center={[latitude, longitude]} zoom={18}>
+            <Map center={[latitude, longitude]} zoom={16}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               />
               {data.map(x => {
-                console.log("-", x.radius);
-                return (
-                  <Circle
-                    key={x._key}
-                    center={x.location.coordinates}
-                    radius={parseInt(x.radius)}
-                  ></Circle>
-                );
-              })}
-              <Circle center={[latitude, longitude]} radius={100}></Circle>
+                  console.log("-", x);
+                  return (
+                    <Circle
+                      key={x.board._key}
+                      center={x.board.location.coordinates}
+                      radius={parseInt(x.board.radius)}
+                      onClick={toggleShowBoard(x.index)}
+                    > </Circle>
+                  );
+                })}
+              <Circle center={[latitude, longitude]} radius={100} fillColor='red' ></Circle>
             </Map>
           )}
         </div>
@@ -206,6 +215,9 @@ const Boards = props => {
       <Drawer anchor="left" open={newBoardDrawer} onClose={toggleNewBoard()}>
         {getNewBoard()}
       </Drawer>
+      <Drawer anchor="right" open={showBoardDrawer} onClose={toggleShowBoard()}>
+        {showBoard()}
+      </Drawer>      
     </div>
   ) : (
     <EmptyState
