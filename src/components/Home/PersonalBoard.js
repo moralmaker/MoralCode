@@ -70,7 +70,7 @@ function PersonalBoard(props) {
 
 
   const list = (data, dense, uid) => {
-    if (!data || !data[0].commandment) return null;
+    if (!data || !data[0] || !data[0].commandment) return null;
     return (
       <List dense={dense}>
         {data.map(x => (

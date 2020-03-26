@@ -11,6 +11,18 @@ import Badge from '@material-ui/core/Badge';
 import Store from "../../services/Store";
 const api = new Store();
 
+const gob = async (boardId, uid) => {
+  try {
+    const xx = await api.post('gob', {
+      boardId :  boardId ,
+      uid: uid
+    });
+    console.log("xx:",xx)
+    return xx;
+  } catch {
+    throw new Error("api error - GetOnBoard");
+  }
+};
 
 const useStyles = makeStyles(theme => ({
 
@@ -51,25 +63,12 @@ const Board = (props) => {
     );
   };
  
-  const getOnBoard = async (uid, bid,) => {
-    try {
-      const xx = await api.post('getOnBoard', {
-        _id :  bid ,
-        uid: uid
-      });
-      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~", xx);
-      return xx;
-    } catch {
-      throw new Error("api error - getOnBoard ");
-    }
-  };
-
-
+  console.log("propsss   ",props)
   return data ? (
     <div>
       <h1>{data.board.name}</h1>
       {list(data.commandments)}
-      <IconButton  color="primary"  onClick={() => {}}>Get On Board</IconButton>
+      <IconButton  color="primary"  onClick={() => gob(data.board._id, props.uid)}>Get On Board</IconButton>
     </div>
   ) : <span/>
 }
