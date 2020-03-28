@@ -69,6 +69,8 @@ const Board = (props) => {
       <h1>{data.board.name}</h1>
       {list(data.commandments)}
       <IconButton  color="primary"  onClick={() => gob(data.board._id, props.uid)}>Get On Board</IconButton>
+
+      <IconButton  color="primary" style={{ position: 'absolute',  bottom: 0,  left: 0 }} onClick={props.back}>Back</IconButton>      
     </div>
   ) : <span/>
 }

@@ -7,6 +7,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
+import GOBIcon from "@material-ui/icons/DeviceHub";
 import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -54,10 +55,21 @@ const Commandment =(props) => {
     }
   };
 
+  const GOB = async (cid, uid) => {
+    try {
+      const xx = await api.post('addec', {
+        cid: cid,
+        uid: uid
+      });
+      return xx;
+    } catch {
+      throw new Error("api error - GetOnBoard");
+    }
+  };  
+
   useEffect(() => {
-    
-      if(type !== '') {
-        console.log("iuyfuiyrseuisyrkw,refresh", refresh, type)
+      if(type === 'gob') GOB(props._id, props.uid)
+      if(type !== '' && type !== 'gob') {
         SupportCommandment(props._id, props.uid, type) 
       }
     },[refresh])
@@ -84,7 +96,13 @@ const Commandment =(props) => {
             }><Badge  badgeContent={unsupport} max={10000}>
                 <DeleteIcon />
               </Badge>
-            </IconButton>            
+            </IconButton>
+            <IconButton  color={supported ? "secondary" : "primary"}  onClick={ async () => {
+                setType('gob')
+                setRefresh(refresh +1)
+            }}>
+              <GOBIcon/>           
+            </IconButton>  
             <ListItemText className={classes.commandment}
               primary={props.text}
               secondary={props.author ? props.author : null}

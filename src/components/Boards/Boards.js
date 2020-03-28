@@ -110,7 +110,7 @@ const Boards = props => {
 
   const showBoard = () => {
     console.log("XXXXXX   ",showBoardIndex,data[showBoardIndex])
-    return  (<Board data={data[showBoardIndex]} uid={props.uid}/>)
+    return  (<Board data={data[showBoardIndex]} uid={props.uid} back={() => setShowBoardDrawer(false)}/>)
   }
 
   const getNewBoard = () => (

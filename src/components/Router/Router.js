@@ -7,8 +7,8 @@ import { BrowserRouter, Switch, Redirect, Route, Link } from "react-router-dom";
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import HomeIcon from '@material-ui/icons/Home';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
+import CIcon from '@material-ui/icons/MenuBook';
+import MapIcon from '@material-ui/icons/Map';
 
 import Home from "../Home";
 import Commandments from "../Commandments";
@@ -81,9 +81,9 @@ class Router extends Component {
       onChange={(e,value)=> this.setState({currentRoute : value})}
       showLabels
     >
-     <BottomNavigationAction label="Pesonal" icon={ <Link to={ `/`}><HomeIcon /></Link>} /> 
-     <BottomNavigationAction label="Favorites" icon={<Link to={ `/Commandments`}><FavoriteIcon /></Link>} /> 
-     <BottomNavigationAction label="Nearby" icon={<Link to={ `/Boards`}><LocationOnIcon /> </Link>} /> 
+     <BottomNavigationAction label="My Board" icon={ <Link to={ `/`}><HomeIcon /></Link>} /> 
+     <BottomNavigationAction label="Commandments" icon={<Link to={ `/Commandments`}><CIcon /></Link>} /> 
+     <BottomNavigationAction label="Geo Boards" icon={<Link to={ `/Boards`}><MapIcon /> </Link>} /> 
       
 
     </BottomNavigation>
