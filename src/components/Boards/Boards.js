@@ -110,7 +110,10 @@ const Boards = props => {
 
   const showBoard = () => {
     console.log("XXXXXX   ",showBoardIndex,data[showBoardIndex])
-    return  (<Board data={data[showBoardIndex]} uid={props.uid} back={() => setShowBoardDrawer(false)}/>)
+    return  (<Board data={data[showBoardIndex]} uid={props.uid} back={() => {
+      setShowBoardDrawer(false)
+      setRefresh(refresh +1)
+    }  }/>)
   }
 
   const getNewBoard = () => (
@@ -198,6 +201,7 @@ const Boards = props => {
                   return (
                     <Circle
                       key={x.board._key}
+                      color={x.onboard[0] ? 'red' : 'blue'}
                       center={x.board.location.coordinates}
                       radius={parseInt(x.board.radius)}
                       onClick={toggleShowBoard(x.index)}
