@@ -4,6 +4,9 @@ import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
+const filterOptions = (options, { inputValue }) => options
+  
+
 export default function InputCommandment({ setNewc ,newc, uid}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
@@ -11,18 +14,15 @@ export default function InputCommandment({ setNewc ,newc, uid}) {
 
   React.useEffect(() => {
     let active = true;
-
+/*
     if (!loading) {
       return undefined;
     }
-
+*/
     (async () => {
-      console.log("UIDIUDIUDIDUID:", uid)
-      const response = await fetch(`https://moralcode.xyz/_db/moral/moral/com?uid=${uid}`);
+      const response = await fetch(`https://moralcode.xyz/_db/moral/moral/com?uid=${uid}&text=${newc}`);
       const com = await response.json();
-      console.log("UIDIUDIUDIDUID:", com, response)
       const commandments = com && com.commandments;
-      console.log("commandments:", commandments);
       if (active) {
         setOptions(commandments.map(c => c));
       }
@@ -31,14 +31,14 @@ export default function InputCommandment({ setNewc ,newc, uid}) {
     return () => {
       active = false;
     };
-  }, [loading]);
+  }, [loading,newc]);
 
   React.useEffect(() => {
     if (!open) {
       setOptions([]);
     }
   }, [open]);
-
+ 
   return (
     <Autocomplete
       id="new commandment"
@@ -58,6 +58,7 @@ export default function InputCommandment({ setNewc ,newc, uid}) {
       getOptionSelected={(option, value) => option.text === value.text}
       getOptionLabel={option => option.text}
       options={options}
+      filterOptions={filterOptions} 
       loading={loading}
       renderInput={params => (
         <TextField
