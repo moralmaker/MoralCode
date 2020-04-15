@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 
+import Grid from "@material-ui/core/Grid";
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import Typography from '@material-ui/core/Typography';
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
@@ -53,11 +60,15 @@ const useStyles = makeStyles(theme => ({
   input: {
     marginTop: 50,
     display: "block"
-  }
+  },
+  bbox: {
+    maxWidth: 345,
+  },  
 }));
 
 const Boards = props => {
-  const [data, setData] = useState([]);
+  const [geoboards, setGeoBoards] = useState([]);
+  const [userboards, setUserBoards] = useState([]);  
   const [isLoading, setIsLoading] = useState(true);
   const classes = useStyles();
   const [dense, setDense] = React.useState(false);
@@ -69,6 +80,7 @@ const Boards = props => {
   const [newBoardDrawer, setNewBoardDrawer] = useState(false);
   const [showBoardDrawer, setShowBoardDrawer] = useState(false);  
   const [showBoardIndex, setShowBoardIndex] = useState(0);    
+  const [showUserBoards, setShowUserBoards] = useState(false);     
   const { latitude, longitude, error } = usePosition(false);
 
   const NewBoard = async () => {
@@ -108,13 +120,25 @@ const Boards = props => {
     setShowBoardDrawer(!showBoardDrawer);
   };
 
+  const toggleShowUserBoards = (index) => event => {
+    //get the board index
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+    setShowUserBoards(!showUserBoards);
+  };  
+
   const showBoard = () => {
-    console.log("XXXXXX   ",showBoardIndex,data[showBoardIndex])
-    return  (<Board data={data[showBoardIndex]} uid={props.uid} back={() => {
+
+    return  (<Board geoboards={geoboards[showBoardIndex]} uid={props.uid} back={() => {
       setShowBoardDrawer(false)
       setRefresh(refresh +1)
     }  }/>)
   }
+
 
   const getNewBoard = () => (
     <div className={classes.form} role="presentation">
@@ -143,7 +167,41 @@ const Boards = props => {
     </div>
   );
 
+const userBoardsView = () => (
+  <List dense={dense}>
+    {userboards.map(x=>x.board).map(x => {
+      return (
+      <ListItem key={x._id}  display="flex">
+        <Badge  color='primary' anchorOrigin={{vertical: 'bottom', horizontal: 'left' }} badgeContent={x.members} max={10000}>               
+          <Card className={classes.root}>
+            <CardActionArea>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="h2">
+                  {x.name}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
 
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+            <CardActions>
+              <Button size="small" color="primary">
+                GoTo
+              </Button>
+              <Button size="small" color="primary">
+                Open
+              </Button>
+            </CardActions>
+          </Card> 
+        </Badge> 
+      </ListItem>
+    )})}
+          <IconButton aria-label="add" color="primary" onClick={toggleShowUserBoards()}>
+        {" "}
+        <h3 onClick={toggleShowUserBoards(false)}> Back </h3>
+      </IconButton>
+  </List>  
+)
   useEffect(() => {
     const link = `https://moralcode.xyz/_db/moral/moral/geoBoards?latitude=${latitude}&longitude=${longitude}&uid=${
       props.uid
@@ -157,12 +215,16 @@ const Boards = props => {
       })
         .then(res => res.json())
         .then(response => {
-          response = response.boards;
-          console.log("DDDData:", response);
-          const boards = index === 0 ? response : [...data, ...response];
-          boards.forEach((x,i) => x.index = i)
-          setData(boards);
+          const gb = response.geoBoards;
+          const ub = response.userBoards;
+          console.log("DDDGeoBoards:", response);
+          const geoBoards = index === 0 ? gb : [...geoboards, ...gb];
+          geoBoards.forEach((x,i) => x.index = i)
+      
+          setUserBoards(ub)                            
+          setGeoBoards(geoBoards);
           setIsLoading(false);
+
         })
         .catch(error => {
           console.log("in the f catch ", error);
@@ -186,17 +248,17 @@ const Boards = props => {
         {" "}
         <h3> boards </h3>
       </IconButton>
-
-      {data && (
+     
+      {geoboards && (
         <div className={classes.demo}>
-          {console.log("~~~~", index, submit, data.length)}
+          {console.log("~~~~", geoboards)}
           {latitude && (
             <Map center={[latitude, longitude]} zoom={16}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               />
-              {data.map(x => {
+              {geoboards.map(x => {
                   console.log("-", x);
                   return (
                     <Circle
@@ -210,7 +272,14 @@ const Boards = props => {
                 })}
               <Circle center={[latitude, longitude]} radius={100} fillColor='red' ></Circle>
             </Map>
-          )}
+          )}    
+
+      <IconButton aria-label="add" color="primary" onClick={toggleShowUserBoards()}>
+        {" "}
+        <h3> boards </h3>
+      </IconButton>
+
+
         </div>
       )}
       <Backdrop className={classes.backdrop} open={isLoading}>
@@ -221,7 +290,10 @@ const Boards = props => {
       </Drawer>
       <Drawer anchor="right" open={showBoardDrawer} onClose={toggleShowBoard()}>
         {showBoard()}
-      </Drawer>      
+      </Drawer>   
+      <Drawer anchor="bottom" open={showUserBoards} onClose={toggleShowUserBoards()}>
+        {userBoardsView()}
+      </Drawer>           
     </div>
   ) : (
     <EmptyState
@@ -232,4 +304,4 @@ const Boards = props => {
 };
 
 export default Boards;
-//  {list(data, dense, props.uid)}
+//  {list(geoboards, dense, props.uid)}

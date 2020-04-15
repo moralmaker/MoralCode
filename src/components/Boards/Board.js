@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Board = (props) => {
-  const data = props.data
+  const data = props.geoboards
 
   const list = (data, dense) => {
         
