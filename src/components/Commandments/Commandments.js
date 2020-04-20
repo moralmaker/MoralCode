@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 import PropTypes from "prop-types";
+import Grid from "@material-ui/core/Grid";
+import Paper from '@material-ui/core/Paper';
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -14,18 +16,22 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Badge from '@material-ui/core/Badge';
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import InputCommandment from "../Home/InputCommandment";
 import Store from "../../services/Store";
 const api = new Store();
+
 
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 20,
-    maxWidth: 752,
-  },
+   },
   demo: {
     backgroundColor: theme.palette.background.black
   },
+  p2:{
+    margin: '0.5%',
+  },   
   title: {
     margin: theme.spacing(1, 1, 1)
   },
@@ -75,8 +81,17 @@ const Commandment =(props) => {
     },[refresh])
 
   return (
-    <ListItem key={props._id}>          
-            <IconButton  color={supported ? "secondary" : "primary"}  onClick={() => {
+
+    <Grid item xs='auto'  key={props._id} className={classes.p2} >
+     <Paper className={classes.paper} >
+
+     <ListItemText className={classes.commandment}
+              primary={props.text}
+              secondary={props.author ? props.author : null}
+              className={classes.p2}
+            />
+
+     <IconButton  color={supported ? "secondary" : "primary"}  onClick={() => {
                 setType('support')
                 setSupported(!supported)
                 setSupport(support + (supported === true ? -1 : 1 ))
@@ -103,11 +118,9 @@ const Commandment =(props) => {
             }}>
               <GOBIcon/>           
             </IconButton>  
-            <ListItemText className={classes.commandment}
-              primary={props.text}
-              secondary={props.author ? props.author : null}
-            />
-          </ListItem>
+
+     </Paper>
+  </Grid>
   )
 }
 
@@ -119,22 +132,24 @@ const  Commandments = (props) => {
   const [dense, setDense] = React.useState(false);
   const [refresh, setRefresh] = useState(1);    
   const [index, setIndex] = useState(0);
-  const [more, setMore] = useState(true);   
+  const [more, setMore] = useState(true); 
+  const [newc, setNewc] = React.useState("");
+  
  
-  const getCommandments = () => setIndex(index +10)    
+  const getCommandments = () => setIndex(index +30)    
 
-  const list = (data, dense, uid) => {
+  const list = (data, uid) => {
     if (!data || !data[0]) return null;
     return (
-      <List dense={dense}>
-        {data.map(x => <Commandment  {...x} uid={uid}/>
+      <Grid container spacing={1} >
+        {data.map(x => <Commandment  key={x._id} {...x} uid={uid}/>
         )}
-      </List>
+      </Grid>
     );
   };  
 
   useEffect(() => {
-    fetch(`https://moralcode.xyz/_db/moral/moral/com?active=false&uid=${props.uid}&offset=${index}&count=10&orderby=support`, {
+    fetch(`https://moralcode.xyz/_db/moral/moral/com?uid=${props.uid}&offset=${index}&count=30&orderby=support&text=${newc}`, {
       method: "GET",
       headers: new Headers({})
     })
@@ -142,7 +157,7 @@ const  Commandments = (props) => {
       .then(response => {
         response = response.commandments
         console.log("DDDData:",response)
-        if((response.length || 0) < 10) setMore(false)
+        if((response.length || 0) < 30) setMore(false)
         const commandments = index === 0  ? response : [...data, ...response]
         setData(commandments);
         setIsLoading(false);
@@ -153,11 +168,11 @@ const  Commandments = (props) => {
           setIsLoading(false);
          }, 500);
       });
-  }, [refresh, index]);
+  }, [refresh, index, newc]);
   return (
     <div>
         <IconButton aria-label="add" color="primary" onClick={() => setRefresh(2)}> <h3> Commandments </h3></IconButton>
-
+        <InputCommandment setNewc={setNewc} newc={newc} uid={props.uid} />
       {data && (
         <div className={classes.demo}>
           <InfiniteScroll
@@ -167,11 +182,11 @@ const  Commandments = (props) => {
           loader={<h4>Loading...</h4>}
           endMessage={
             <p style={{ textAlign: "center" }}>
-              <b>Yay! You have seen it all</b>
+              <b></b>
             </p>
           }
         >
-         {list(data, dense, props.uid)}
+         {list(data, props.uid)}
         </InfiniteScroll>
 
         </div>

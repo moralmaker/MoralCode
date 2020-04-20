@@ -20,7 +20,7 @@ export default function InputCommandment({ setNewc ,newc, uid}) {
     }
 */
     (async () => {
-      const response = await fetch(`https://moralcode.xyz/_db/moral/moral/com?uid=${uid}&text=${newc}`);
+      const response = await fetch(`https://moralcode.xyz/_db/moral/moral/com?uid=${uid}&orderby=support&text=${newc}`);
       const com = await response.json();
       const commandments = com && com.commandments;
       if (active) {

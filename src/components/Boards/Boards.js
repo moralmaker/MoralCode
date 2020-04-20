@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 import Grid from "@material-ui/core/Grid";
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import IconButton from "@material-ui/core/IconButton";
-import DeleteIcon from "@material-ui/icons/Delete";
-import AddIcon from "@material-ui/icons/Add";
 import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -18,10 +11,9 @@ import Badge from "@material-ui/core/Badge";
 import Drawer from "@material-ui/core/Drawer";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Divider from "@material-ui/core/Divider";
+
 
 import { Map, Circle, Popup, Tooltip, TileLayer } from "react-leaflet";
-import { Icon } from "leaflet";
 import "./boards.css";
 import { usePosition } from "../../services/GeoHook";
 
@@ -34,7 +26,7 @@ const api = new Store();
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 20,
-    maxWidth: 752
+    //maxWidth: 752
   },
   form: {
     "& > *": {
@@ -42,6 +34,9 @@ const useStyles = makeStyles(theme => ({
       width: 200
     }
   },
+  p2:{
+    margin: '2%'
+  } , 
   demo: {
     backgroundColor: theme.palette.background.black
   },
@@ -51,6 +46,11 @@ const useStyles = makeStyles(theme => ({
   board: {
     fontFamily: "Times New Roman"
   },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  },  
   list: {
     width: 250
   },
@@ -71,10 +71,8 @@ const Boards = props => {
   const [userboards, setUserBoards] = useState([]);  
   const [isLoading, setIsLoading] = useState(true);
   const classes = useStyles();
-  const [dense, setDense] = React.useState(false);
   const [refresh, setRefresh] = useState(1);
   const [index, setIndex] = useState(0);
-  const [submit, setsubmit] = useState(true);
   const [newBoardName, setNewBoardName] = useState("");
   const [radius, setRadius] = useState(20);
   const [newBoardDrawer, setNewBoardDrawer] = useState(false);
@@ -167,41 +165,35 @@ const Boards = props => {
     </div>
   );
 
-const userBoardsView = () => (
-  <List dense={dense}>
-    {userboards.map(x=>x.board).map(x => {
-      return (
-      <ListItem key={x._id}  display="flex">
-        <Badge  color='primary' anchorOrigin={{vertical: 'bottom', horizontal: 'left' }} badgeContent={x.members} max={10000}>               
-          <Card className={classes.root}>
-            <CardActionArea>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
-                  {x.name}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
 
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-            <CardActions>
+  const userBoardsView  = () => (
+    <div className={classes.p2}>
+      <Grid container spacing={3} xl={12} >
+      {userboards.map(x=>x.board).map(x => {
+        return (  
+        <Grid item   className={classes.paper}>
+          <Badge  color='secondary' anchorOrigin={{vertical: 'top', horizontal: 'left' }} badgeContent={x.members} max={10000}>
+            <Paper className={classes.paper}>
+              <Typography gutterBottom variant="h5" component="h2">
+               {x.name}
+              </Typography> 
               <Button size="small" color="primary">
                 GoTo
-              </Button>
-              <Button size="small" color="primary">
-                Open
-              </Button>
-            </CardActions>
-          </Card> 
-        </Badge> 
-      </ListItem>
-    )})}
-          <IconButton aria-label="add" color="primary" onClick={toggleShowUserBoards()}>
+              </Button>                        
+            </Paper>
+          </Badge>  
+        </Grid>
+         )
+      })}
+      </Grid>
+      <IconButton aria-label="add" color="primary" onClick={toggleShowUserBoards()}>
         {" "}
         <h3 onClick={toggleShowUserBoards(false)}> Back </h3>
       </IconButton>
-  </List>  
-)
+    </div> 
+  )
+
+
   useEffect(() => {
     const link = `https://moralcode.xyz/_db/moral/moral/geoBoards?latitude=${latitude}&longitude=${longitude}&uid=${
       props.uid
