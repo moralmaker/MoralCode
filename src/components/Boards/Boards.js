@@ -75,6 +75,7 @@ const Boards = props => {
   const [index, setIndex] = useState(0);
   const [newBoardName, setNewBoardName] = useState("");
   const [radius, setRadius] = useState(20);
+  const [colorMulti, setColorMulti] = useState(1);
   const [newBoardDrawer, setNewBoardDrawer] = useState(false);
   const [showBoardDrawer, setShowBoardDrawer] = useState(false);  
   const [showBoardIndex, setShowBoardIndex] = useState(0);    
@@ -211,8 +212,13 @@ const Boards = props => {
           const ub = response.userBoards;
           console.log("DDDGeoBoards:", response);
           const geoBoards = index === 0 ? gb : [...geoboards, ...gb];
+          const scoreArray = geoBoards.map(x => x !== null ? x.score : 0)
+          const maxScore = Math.max(...scoreArray)
+          //const minScore = Math.min(...scoreArray)
+
           geoBoards.forEach((x,i) => x.index = i)
-      
+
+          setColorMulti(255 / maxScore)  
           setUserBoards(ub)                            
           setGeoBoards(geoBoards);
           setIsLoading(false);
@@ -255,7 +261,8 @@ const Boards = props => {
                   return (
                     <Circle
                       key={x.board._key}
-                      color={x.onboard[0] ? 'red' : 'blue'}
+                      color={x.onboard[0] ? 'red' : `rgb(0, ${255 - Math.floor(x.score * colorMulti)}, 255)`}
+                      //color={x.onboard[0] ? 'blue' : `rgb(255,255,0)`}
                       center={x.board.location.coordinates}
                       radius={parseInt(x.board.radius)}
                       onClick={toggleShowBoard(x.index)}
