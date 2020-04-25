@@ -3,11 +3,13 @@ import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { throttle, debounce } from 'throttle-debounce';
 
 const filterOptions = (options, { inputValue }) => options
   
 
 export default function InputCommandment({ setNewc ,newc, uid}) {
+  const SetNewC = debounce(500,setNewc)
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
@@ -53,7 +55,7 @@ export default function InputCommandment({ setNewc ,newc, uid}) {
       }}
       onInputChange={(x, value) => {
         console.log("$#$#@$@", value ,newc);
-        setNewc(value);
+        SetNewC(value);
       }}
       getOptionSelected={(option, value) => option.text === value.text}
       getOptionLabel={option => option.text}
