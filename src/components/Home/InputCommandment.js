@@ -9,7 +9,7 @@ const filterOptions = (options, { inputValue }) => options
   
 
 export default function InputCommandment({ setNewc ,newc, uid}) {
-  const SetNewC = debounce(500,setNewc)
+  const SetNewC = debounce(600,throttle(500,setNewc))
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
   const loading = open && options.length === 0;
