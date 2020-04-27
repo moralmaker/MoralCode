@@ -10,6 +10,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
+import FadeIn from 'react-fade-in'
+
 import InputCommandment from "./InputCommandment";
 
 import Store from "../../services/Store";
@@ -73,21 +75,23 @@ function PersonalBoard(props) {
     if (!data || !data[0] || !data[0].commandment) return null;
     return (
       <List dense={dense}>
-        {data.map(x => (
-          <ListItem key={x.commandment.id}>
-            <IconButton aria-label="delete" color="primary"  onClick={ async () => {
-                await removeCommandment(x.commandment.id, x.board.id, uid) 
-                setIsLoading(true)
-              }
-            }>
-              <DeleteIcon />
-            </IconButton>
-            <ListItemText
-              primary={x.commandment.text}
-              secondary={x.commandment.author ? x.commandment.author : null}
-            />
-          </ListItem>
-        ))}
+        <FadeIn delay={500} transitionDuration={1000}>
+          {data.map(x => (
+            <ListItem key={x.commandment.id}>
+              <IconButton aria-label="delete" color="primary"  onClick={ async () => {
+                  await removeCommandment(x.commandment.id, x.board.id, uid) 
+                  setIsLoading(true)
+                }
+              }>
+                <DeleteIcon />
+              </IconButton>
+              <ListItemText
+                primary={x.commandment.text}
+                secondary={x.commandment.author ? x.commandment.author : null}
+              />
+            </ListItem>
+          ))}
+        </FadeIn>
       </List>
     );
   };  
