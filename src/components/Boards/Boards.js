@@ -97,6 +97,19 @@ const Boards = props => {
     }
   };
 
+  const offBoard = async (board_id) => {
+    try {
+      const xx = await api.post("removeb", {
+        board_id,
+        uid
+      });
+      setRefresh(refresh +1)
+      if (userboards === []) setShowUserBoards(!showUserBoards);      
+    } catch {
+      throw new Error("api error - add new board");
+    }
+  };  
+
   const toggleNewBoard = () => event => {
     if (
       event.type === "keydown" &&
@@ -128,6 +141,7 @@ const Boards = props => {
       return;
     }
     setShowUserBoards(!showUserBoards);
+    setRefresh(refresh +1)
   };  
 
   const showBoard = () => {
@@ -178,8 +192,8 @@ const Boards = props => {
               <Typography gutterBottom variant="h5" component="h2">
                {x.name}
               </Typography> 
-              <Button size="small" color="primary">
-                GoTo
+              <Button size="small" onClick={() => offBoard(x._id)} color="primary">
+                GetOffBoard
               </Button>                        
             </Paper>
           </Badge>  
