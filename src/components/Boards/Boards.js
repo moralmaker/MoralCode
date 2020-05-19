@@ -11,7 +11,9 @@ import Badge from "@material-ui/core/Badge";
 import Drawer from "@material-ui/core/Drawer";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-
+import AddIconCircle from '@material-ui/icons/AddCircleOutline'
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 
 import { Map, Circle, Popup, Tooltip, TileLayer } from "react-leaflet";
 import "./boards.css";
@@ -38,7 +40,7 @@ const useStyles = makeStyles(theme => ({
     margin: '2%'
   } , 
   demo: {
-    backgroundColor: theme.palette.background.black
+    //backgroundColor: theme.palette.background.black
   },
   title: {
     margin: theme.spacing(1, 1, 1)
@@ -81,6 +83,7 @@ const Boards = props => {
   const [showBoardIndex, setShowBoardIndex] = useState(0);    
   const [showUserBoards, setShowUserBoards] = useState(false);     
   const { latitude, longitude, error } = usePosition(false);
+  
 
   const NewBoard = async () => {
     try {
@@ -184,6 +187,10 @@ const Boards = props => {
   const userBoardsView  = () => (
     <div className={classes.p2}>
       <Grid container spacing={3} xl={12} >
+      <IconButton aria-label="add" color="primary" onClick={toggleShowUserBoards()}>
+        {" "}
+        < ArrowBackIosIcon/> 
+      </IconButton>             
       {userboards.map(x=>x.board).map(x => {
         return (  
         <Grid item   className={classes.paper}>
@@ -201,10 +208,7 @@ const Boards = props => {
          )
       })}
       </Grid>
-      <IconButton aria-label="add" color="primary" onClick={toggleShowUserBoards()}>
-        {" "}
-        <h3 onClick={toggleShowUserBoards(false)}> Back </h3>
-      </IconButton>
+
     </div> 
   )
 
@@ -258,12 +262,16 @@ const Boards = props => {
       />
       <IconButton aria-label="add" color="primary" onClick={toggleNewBoard()}>
         {" "}
-        <h3> boards </h3>
+        <AddIconCircle/>
       </IconButton>
+
+      <IconButton aria-label="add" color="primary" onClick={toggleShowUserBoards()}>
+        {" "}
+        <AccountCircle/>
+      </IconButton>      
      
       {geoboards && (
         <div className={classes.demo}>
-          {console.log("~~~~", geoboards)}
           {latitude && (
             <Map center={[latitude, longitude]} zoom={16}>
               <TileLayer
@@ -287,10 +295,6 @@ const Boards = props => {
             </Map>
           )}    
 
-      <IconButton aria-label="add" color="primary" onClick={toggleShowUserBoards()}>
-        {" "}
-        <h3> boards </h3>
-      </IconButton>
 
 
         </div>
