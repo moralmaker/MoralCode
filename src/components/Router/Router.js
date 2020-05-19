@@ -81,7 +81,7 @@ class Router extends Component {
       onChange={(e,value)=> this.setState({currentRoute : value})}
       showLabels
     >
-     <BottomNavigationAction label="My Board" icon={ <Link to={ `/`}><HomeIcon /></Link>} /> 
+     <Link to={ `/`}> <BottomNavigationAction label="My Board" icon={ <HomeIcon />} /> </Link>
      <BottomNavigationAction label="Commandments" icon={<Link to={ `/Commandments`}><CIcon /></Link>} /> 
      <BottomNavigationAction label="Geo Boards" icon={<Link to={ `/Boards`}><MapIcon /> </Link>} /> 
       

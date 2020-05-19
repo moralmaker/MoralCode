@@ -9,6 +9,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import AddIconCircle from '@material-ui/icons/AddCircleOutline'
 
 import FadeIn from 'react-fade-in'
 
@@ -121,11 +122,9 @@ function PersonalBoard(props) {
       {data.data && data.data[0] && (
         <IconButton aria-label="add" color="primary" onClick={async () => {
           const xxx = await addCommandment(newc, data.data[0].board.id, props.uid)
-          console.log("____",this)
           setIsLoading(true)
         }}>
-          <AddIcon />
-          <h3> {data.data[0].board.name} </h3>
+          <AddIconCircle />
         </IconButton>
       )}
       <InputCommandment setNewc={setNewc} newc={newc} uid={props.uid} />

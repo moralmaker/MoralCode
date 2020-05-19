@@ -5,6 +5,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import { makeStyles } from "@material-ui/core/styles";
 import Badge from '@material-ui/core/Badge';
 
@@ -71,7 +72,7 @@ const Board = (props) => {
       {list(data.commandments)}
       <IconButton  color="primary"  onClick={() => gob(data.board._id, props.uid ,props.back)}>Get On Board</IconButton>
 
-      <IconButton  color="primary" style={{ position: 'absolute',  bottom: 0,  left: 0 }} onClick={props.back}>Back</IconButton>      
+      <IconButton  color="primary" style={{ position: 'absolute',  bottom: 0,  left: 0 }} onClick={props.back}>< ArrowBackIosIcon/></IconButton>      
     </div>
   ) : <span/>
 }
