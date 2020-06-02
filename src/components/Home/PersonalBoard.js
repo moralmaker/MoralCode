@@ -120,14 +120,14 @@ function PersonalBoard(props) {
     <div>
       {isLoading && <p>Wait I'm Loading comments for you</p>}
       {data.data && data.data[0] && (
-        <IconButton aria-label="add" color="primary" onClick={async () => {
+        <IconButton  aria-label="add" color="primary" onClick={async () => {
           const xxx = await addCommandment(newc, data.data[0].board.id, props.uid)
           setIsLoading(true)
         }}>
-          <AddIconCircle />
+          <AddIconCircle  data-tut="add_com"/>
         </IconButton>
       )}
-      <InputCommandment setNewc={setNewc} newc={newc} uid={props.uid} />
+      <div  data-tut="input_com"><InputCommandment setNewc={setNewc} newc={newc} uid={props.uid} /></div>
       <div className={classes.demo}>{list(data.data, dense, props.uid)}</div>
       <Backdrop className={classes.backdrop} open={isLoading} >
         <CircularProgress color="inherit" />

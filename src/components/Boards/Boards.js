@@ -236,7 +236,7 @@ const Boards = props => {
 
           geoBoards.forEach((x,i) => x.index = i)
 
-          setColorMulti(255 / maxScore)  
+          setColorMulti(255 / maxScore )  
           setUserBoards(ub)                            
           setGeoBoards(geoBoards);
           setIsLoading(false);
@@ -283,7 +283,7 @@ const Boards = props => {
                   return (
                     <Circle
                       key={x.board._key}
-                      color={x.onboard[0] ? 'red' : `rgb(0, ${255 - Math.floor(x.score * colorMulti)}, 255)`}
+                      color={x.onboard[0] ? 'red' : `rgb(${Math.floor(x.score * colorMulti)}, ${Math.floor(x.score * colorMulti)},${255-Math.floor(x.score * colorMulti)} )`}
                       //color={x.onboard[0] ? 'blue' : `rgb(255,255,0)`}
                       center={x.board.location.coordinates}
                       radius={parseInt(x.board.radius)}

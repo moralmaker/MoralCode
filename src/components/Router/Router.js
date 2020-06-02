@@ -6,6 +6,8 @@ import { BrowserRouter, Switch, Redirect, Route, Link } from "react-router-dom";
 
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
 import HomeIcon from '@material-ui/icons/Home';
 import CIcon from '@material-ui/icons/MenuBook';
 import MapIcon from '@material-ui/icons/Map';
@@ -28,24 +30,41 @@ const styles = {
     zIndex:50
   },
 };
+const accentColor = "#5cb7b7";
 
 class Router extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {currentRoute : 0}
+    this.state = {
+      currentRoute : 0,
+      isTourOpen: false
+    }
 
   }
+
+  closeTour = () => {
+    this.setState({
+      isTourOpen: false
+    });
+  };
+
+  openTour = () => {
+    this.setState({
+      isTourOpen: true
+    });
+  };
 
   render() {
     // Properties
     const { user, roles, bar } = this.props;
 
+    const onClick = (e,value) => this.setState({currentRoute : value})
     // Functions
     const { openSnackbar } = this.props;
     const uid = user && user.uid ?  user.uid : null
     return (
-      <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
+      <BrowserRouter >
         {bar}
         <Switch>
           <Route path="/" exact>
@@ -74,19 +93,27 @@ class Router extends Component {
             <NotFoundContent />
           </Route>
         </Switch>
+     
 
-        <BottomNavigation
-      value={this.state.currentRoute}
-      style={styles.root}
-      onChange={(e,value)=> this.setState({currentRoute : value})}
-      showLabels
-    >
-     <Link to={ `/`}> <BottomNavigationAction label="My Board" icon={ <HomeIcon />} /> </Link>
-     <BottomNavigationAction label="Commandments" icon={<Link to={ `/Commandments`}><CIcon /></Link>} /> 
-     <BottomNavigationAction label="Geo Boards" icon={<Link to={ `/Boards`}><MapIcon /> </Link>} /> 
-      
+    { user &&
+      <BottomNavigation
+        value={this.state.currentRoute}
+        style={styles.root}
+        onChange={onClick}
+        showLabels
+      >
+    {user && !user.tour && <Box display="flex" flexGrow={-1}>
+        <Button color='primary' onClick={this.openTour}> Tour </Button>
+      </Box>
+      }         
+      <BottomNavigationAction component={Link} to="/"  label="My Board" icon={ <HomeIcon />} data-tut="personal" /> 
+      <BottomNavigationAction component={Link} to="/commandments" label="Commandments" icon={<CIcon />} data-tut="commandments" /> 
+      <BottomNavigationAction component={Link} to="/boards" label="Geo Boards" icon={<MapIcon />} data-tut="boards"/> 
+        
 
-    </BottomNavigation>
+      </BottomNavigation>
+    }
+     
    </BrowserRouter>
     );
   }

@@ -30,6 +30,8 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 20,
    },
   demo: {
+    fontFamily: "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
+    fontSize : "15" ,    
     backgroundColor: theme.palette.background.black
   },
   p2:{
@@ -45,7 +47,8 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1, 1, 1)
   },
   commandment : {  
-    fontFamily: "Times New Roman",
+    fontFamily: "'Palatino Linotype', 'Book Antiqua', Palatino, serif",
+    fontSize : "15" ,
     initialLetter: 2
   },   
 }));
@@ -133,7 +136,7 @@ const Commandment =(props) => {
                 <DeleteIcon />
               </Badge>
             </IconButton>
-            <IconButton  color={supported ? "secondary" : "primary"}  onClick={ async () => {
+            <IconButton data-tut="add_com" color={supported ? "secondary" : "primary"}  onClick={ async () => {
                 setType('gob')
                 setRefresh(refresh +1)
             }}>
@@ -181,9 +184,11 @@ const  Commandments = (props) => {
     })
       .then(res => res.json())
       .then(response => {
-        response = response.commandments
-        console.log("DDDData:",response)
-        if((response.length || 0) < 30) setMore(false)
+        const old_ids = data.map(x => x._id) //  help filter the doublle fetched data
+        const resl = response.commandments && response.commandments.length // check if there is more data to fetch
+        response = response.commandments.map(x => old_ids.includes(x._id) ? 0 : x).filter(x => x)
+        console.log("DDDData:",response, resl)
+        if((resl || 0) < 30) setMore(false)
         const commandments = index === 0  ? response : [...data, ...response]
         setData(commandments);
         setIsLoading(false);
