@@ -7,10 +7,9 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardActions from '@material-ui/core/CardActions';
 import IconButton from "@material-ui/core/IconButton";
-import DeleteIcon from "@material-ui/icons/Delete";
-import MoreVertIcon from "@material-ui/icons/Delete";
+import LoveIcon from "@material-ui/icons/Favorite";
+import HateIcon from "@material-ui/icons/NotInterested";
 import AddIcon from "@material-ui/icons/Add";
-import GOBIcon from "@material-ui/icons/DeviceHub";
 import { makeStyles } from "@material-ui/core/styles";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -18,11 +17,56 @@ import Badge from '@material-ui/core/Badge';
 import Avatar from '@material-ui/core/Avatar';
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import Joyride from 'react-joyride';
 import FadeIn from 'react-fade-in'
 import InputCommandment from "../Home/InputCommandment";
 import Store from "../../services/Store";
 const api = new Store();
 
+
+const tourSteps = [
+  {
+    content: (<div>You are welcome to browes all the Commandments that had ever been entered.<br/> 
+     <h2>Browse them all</h2></div>) ,
+    placement: 'center',
+    target: 'body',
+    disableBeacon: true,
+    disableOverlay: true
+  },
+  {
+    content: <div><i>ok, ok,</i> if you dont have the time to browes them all just now you can use this filter to search for specific ones.</div>,
+    placement: 'right',
+    target: '.input_com',
+    disableBeacon: true,
+    disableOverlay: true,
+    title: 'Filter',     
+  },
+  {
+    content: <div> Show your <i>LOVE</i>. loved commandments are more visiable<br/>This is the most loved commandment.</div>,
+    target: '.love_com',
+    disableBeacon: true,
+    disableOverlay: true,
+    title: 'Love',       
+  },
+  {
+    content: <div>some of these commandments are just appalling. <br/>if reading it makes you angry your are most welcome to <i>HATE</i> it</div>,
+    target: '.hate_com',
+    disableBeacon: true,
+    disableOverlay: true,
+    title: 'Hate',       
+  },    
+  {
+    content: <div>if you think - "Hey, this is a perfectly good commadment, i want it to be on my board" click here.<br/>
+    if you have less then five commandments on your board this one will join in.</div>,
+    placement: 'bottom',
+    target: '.add_com',
+    title: 'Add it',
+    disableBeacon: true,
+    disableOverlay: true,
+    spotlightClicks: true
+  },  
+
+]
 
 
 const useStyles = makeStyles(theme => ({
@@ -105,17 +149,13 @@ const Commandment =(props) => {
             {props.text.charAt(0)}
           </Avatar>
         }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
+
         title={props.text}
         subheader={props.author}
       />  
         <CardActions disableSpacing>
 
-        <IconButton  color={supported ? "secondary" : "primary"}  onClick={() => {
+        <IconButton className="love_com" color={supported ? "secondary" : "primary"}  onClick={() => {
                 setType('support')
                 setSupported(!supported)
                 setSupport(support + (supported === true ? -1 : 1 ))
@@ -123,24 +163,24 @@ const Commandment =(props) => {
               }
             }>
                 <Badge  badgeContent={support} max={10000}>
-                    <AddIcon />
+                    <LoveIcon />
                 </Badge>    
             </IconButton>
-            <IconButton aria-label="delete" color={unsupported ? "secondary" : "primary"}  onClick={ async () => {
+            <IconButton className="hate_com" aria-label="delete" color={unsupported ? "secondary" : "primary"}  onClick={ async () => {
                 setType('unsupport')
                 setUnsupported(!unsupported)
                 setUnsupport(unsupport + (unsupported === true ? -1 : 1 ))   
                 setRefresh(refresh +1)         
               }
             }><Badge  badgeContent={unsupport} max={10000}>
-                <DeleteIcon />
+                <HateIcon />
               </Badge>
             </IconButton>
-            <IconButton data-tut="add_com" color={supported ? "secondary" : "primary"}  onClick={ async () => {
+            <IconButton className="add_com" color="primary"  onClick={ async () => {
                 setType('gob')
                 setRefresh(refresh +1)
             }}>
-              <GOBIcon/>           
+              <AddIcon/>           
             </IconButton>  
 
         </CardActions>      
@@ -159,8 +199,26 @@ const  Commandments = (props) => {
   const [index, setIndex] = useState(0);
   const [more, setMore] = useState(true); 
   const [newc, setNewc] = React.useState("");
+
+  const { open, close, isOpen } = props.tour
+  const [stepIndex, setStepIndex] = React.useState(0); 
+  const [tourClick, setTourClick] = React.useState(false);     
+  const [run, setRun] = React.useState(true); 
   
- 
+  const handleJoyrideCallback = (data) => {
+    const { action, index, status, type } = data;
+    const finishedStatuses = ['finished', 'skipped'];
+
+    if (finishedStatuses.includes(status)) {
+      setRun(true)
+      close()
+    }
+    console.groupCollapsed(type);
+    console.log(data);
+    console.groupEnd();
+  };
+
+
   const getCommandments = () => setIndex(index +30)    
 
   const list = (data, uid) => {
@@ -202,8 +260,24 @@ const  Commandments = (props) => {
   }, [refresh, index, newc]);
   return (
     <div>
- 
-        <InputCommandment setNewc={setNewc} newc={newc} uid={props.uid} />
+         <Joyride
+          callback={handleJoyrideCallback}
+          continuous={true}
+         // getHelpers={this.getHelpers}
+          run={run && props.tour.isOpen}
+          scrollToFirstStep={true}
+          showProgress={false}
+          showSkipButton={true}
+          steps={tourSteps}
+          styles={{
+            options: {
+              zIndex: 10000,
+            },
+          }}
+        />
+        <div className="input_com"   style={{marginTop: 18}}>
+          <InputCommandment  setNewc={setNewc} newc={newc} uid={props.uid} showes={false}/>
+        </div>
       {data && (
         <div className={classes.demo}>
           <InfiniteScroll

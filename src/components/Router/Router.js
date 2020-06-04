@@ -63,18 +63,19 @@ class Router extends Component {
     // Functions
     const { openSnackbar } = this.props;
     const uid = user && user.uid ?  user.uid : null
+    const tour = {open :this.openTour, close: this.closeTour , isOpen: this.state.isTourOpen}
     return (
       <BrowserRouter >
         {bar}
         <Switch>
           <Route path="/" exact>
-            <Home user={user} openSnackbar={openSnackbar} />
+            <Home user={user} openSnackbar={openSnackbar} tour={tour} />
           </Route>
           <Route path="/commandments" exact>
-            <Commandments uid={uid} openSnackbar={openSnackbar} />
+            <Commandments uid={uid} openSnackbar={openSnackbar} tour={tour} />
           </Route>
           <Route path="/boards" exact>
-            <Boards uid={uid} openSnackbar={openSnackbar} />
+            <Boards uid={uid} openSnackbar={openSnackbar} tour={tour}/>
           </Route>                    
 
           <Route path="/admin">
@@ -103,7 +104,7 @@ class Router extends Component {
         showLabels
       >
     {user && !user.tour && <Box display="flex" flexGrow={-1}>
-        <Button color='primary' onClick={this.openTour}> Tour </Button>
+        <Button color='primary' onClick={this.state.isTourOpen ? this.closeTour : this.openTour}> Tour </Button>
       </Box>
       }         
       <BottomNavigationAction component={Link} to="/"  label="My Board" icon={ <HomeIcon />} data-tut="personal" /> 

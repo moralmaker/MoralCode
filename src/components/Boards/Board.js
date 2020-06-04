@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 
 const Board = (props) => {
   const data = props.geoboards
-
+  console.log("xxxxxxxxx:",data)
   const list = (data, dense) => {
         
     if (!data) return null;
@@ -70,7 +70,7 @@ const Board = (props) => {
     <div>
       <h1>{data.board.name}</h1>
       {list(data.commandments)}
-      <IconButton  color="primary"  onClick={() => gob(data.board._id, props.uid ,props.back)}>Get On Board</IconButton>
+      {!data.onboard[0] && <IconButton  color="primary"  onClick={() => gob(data.board._id, props.uid ,props.back)}>Get On Board</IconButton>}
 
       <IconButton  color="primary" style={{ position: 'absolute',  bottom: 0,  left: 0 }} onClick={props.back}>< ArrowBackIosIcon/></IconButton>      
     </div>

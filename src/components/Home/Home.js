@@ -92,7 +92,7 @@ class Home extends Component {
      if(user){
        return ( 
       <div style={Object.assign({}, styles.slide, styles.slide1)}>
-        <PersonalBoard uid={user.uid} />
+        <PersonalBoard uid={user.uid} tour={this.props.tour}/>
       </div>)
     }
     //if (user) {

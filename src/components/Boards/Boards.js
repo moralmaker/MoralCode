@@ -21,9 +21,43 @@ import { usePosition } from "../../services/GeoHook";
 
 import EmptyState from "../EmptyState";
 
+import Joyride from 'react-joyride';
+
 import Board from "./Board";
 import Store from "../../services/Store";
 const api = new Store();
+
+
+const tourSteps = [
+  {
+    content: (<div>This is the map of your current location.<br/>the cirles on the map represent a <i>Moarl cluster</i> which is an agregation of the moral codes of all moral creatures that joined this cluster<br/>
+    when the color of the circle is lighter it means it's more align with your moral code <br/>
+    Clicking on a cluster will show you the prominant commandments on this cluster<br/>
+    only if you are within the clusers radius you can get on board and mix your moral code with the existing clustered moral codes.<br/>
+    you can join up to five moral clusters</div>) ,
+    placement: 'center',
+    target: 'body',
+    disableBeacon: true,
+    disableOverlay: true,
+    title: 'Moral Map', 
+  },
+  {
+    content: <div>If you like to construct a new <i>Moral Cluster</i> click this button.<br/>After you will enter the cluster name and radius a new cluster will form around your current location and other <i>moral creatures</i> would be able to join</div>,
+    target: '.add_cluster',
+    disableBeacon: true,
+    disableOverlay: true,
+    title: 'Moral Input',       
+  },
+  {
+    content: <div>After you joined some <i>Moral Clusters</i> you can mange them on the cluser on this tab. remember you can only join five.</div>,
+    target: '.manage_clusters',
+    title: 'Our projects',
+    disableBeacon: true,
+    disableOverlay: true,
+    spotlightClicks: true
+  },  
+
+]
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -84,6 +118,23 @@ const Boards = props => {
   const [showUserBoards, setShowUserBoards] = useState(false);     
   const { latitude, longitude, error } = usePosition(false);
   
+  const { open, close, isOpen } = props.tour
+  const [stepIndex, setStepIndex] = React.useState(0); 
+  const [tourClick, setTourClick] = React.useState(false);     
+  const [run, setRun] = React.useState(true); 
+
+  const handleJoyrideCallback = (data) => {
+    const { action, index, status, type } = data;
+    const finishedStatuses = ['finished', 'skipped'];
+
+    if (finishedStatuses.includes(status)) {
+      setRun(true)
+      close()
+    }
+    console.groupCollapsed(type);
+    console.log(data);
+    console.groupEnd();
+  };
 
   const NewBoard = async () => {
     try {
@@ -254,23 +305,36 @@ const Boards = props => {
 
   return uid ? (
     <div>
+          <Joyride
+            callback={handleJoyrideCallback}
+            continuous={true}
+            run={run && props.tour.isOpen}
+            scrollToFirstStep={true}
+            showProgress={false}
+            showSkipButton={true}
+            steps={tourSteps}
+            styles={{
+              options: {
+                zIndex: 10000,
+              },
+            }}
+          />      
       <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
         integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
         crossOrigin=""
       />
-      <IconButton aria-label="add" color="primary" onClick={toggleNewBoard()}>
+      <IconButton className="add_cluster" aria-label="add" color="primary" onClick={toggleNewBoard()}>
         {" "}
         <AddIconCircle/>
       </IconButton>
 
-      <IconButton aria-label="add" color="primary" onClick={toggleShowUserBoards()}>
+      <IconButton className="manage_clusters" aria-label="add" color="primary" onClick={toggleShowUserBoards()}>
         {" "}
         <AccountCircle/>
       </IconButton>      
      
-      {geoboards && (
         <div className={classes.demo}>
           {latitude && (
             <Map center={[latitude, longitude]} zoom={16}>
@@ -278,12 +342,12 @@ const Boards = props => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               />
-              {geoboards.map(x => {
+              {geoboards && geoboards.map(x => {
                   console.log("-", x);
                   return (
                     <Circle
                       key={x.board._key}
-                      color={x.onboard[0] ? 'red' : `rgb(${Math.floor(x.score * colorMulti)}, ${Math.floor(x.score * colorMulti)},${255-Math.floor(x.score * colorMulti)} )`}
+                      color={x.onboard[0] ? 'red' : `rgb(${Math.floor(x.score * colorMulti)}, ${Math.floor(x.score * colorMulti)},${Math.floor(x.score * colorMulti)} )`}
                       //color={x.onboard[0] ? 'blue' : `rgb(255,255,0)`}
                       center={x.board.location.coordinates}
                       radius={parseInt(x.board.radius)}
@@ -298,7 +362,7 @@ const Boards = props => {
 
 
         </div>
-      )}
+
       <Backdrop className={classes.backdrop} open={isLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
