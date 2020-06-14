@@ -62,7 +62,6 @@ const tourSteps = [
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 20,
-    //maxWidth: 752
   },
   form: {
     "& > *": {
@@ -118,13 +117,11 @@ const Boards = props => {
   const [showUserBoards, setShowUserBoards] = useState(false);     
   const { latitude, longitude, error } = usePosition(false);
   
-  const { open, close, isOpen } = props.tour
-  const [stepIndex, setStepIndex] = React.useState(0); 
-  const [tourClick, setTourClick] = React.useState(false);     
+  const { close, isOpen} = props.tour  
   const [run, setRun] = React.useState(true); 
 
   const handleJoyrideCallback = (data) => {
-    const { action, index, status, type } = data;
+    const { status, type } = data;
     const finishedStatuses = ['finished', 'skipped'];
 
     if (finishedStatuses.includes(status)) {
@@ -308,7 +305,7 @@ const Boards = props => {
           <Joyride
             callback={handleJoyrideCallback}
             continuous={true}
-            run={run && props.tour.isOpen}
+            run={run && isOpen}
             scrollToFirstStep={true}
             showProgress={false}
             showSkipButton={true}
@@ -343,11 +340,10 @@ const Boards = props => {
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               />
               {geoboards && geoboards.map(x => {
-                  console.log("-", x);
                   return (
                     <Circle
                       key={x.board._key}
-                      color={x.onboard[0] ? 'red' : `rgb(${Math.floor(x.score * colorMulti)}, ${Math.floor(x.score * colorMulti)},${Math.floor(x.score * colorMulti)} )`}
+                      color={x.onboard[0] ? 'red' : `rgb(${Math.floor(x.score * colorMulti)}, ${Math.floor(x.score * colorMulti)},${255-Math.floor(x.score * colorMulti)} )`}
                       //color={x.onboard[0] ? 'blue' : `rgb(255,255,0)`}
                       center={x.board.location.coordinates}
                       radius={parseInt(x.board.radius)}
